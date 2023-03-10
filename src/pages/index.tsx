@@ -8,7 +8,6 @@ const Home = (props: any) => {
   let receipt = props.receipt[0] as Receipt
   let discounts = props.discounts as any
 
-  {/* <img style={{ width: "100%" }} src={props.imagePath} alt="Barcode" /> */ }
   return (
     <div className="wrapper">
       <div className="receipt-wrapper">
@@ -325,8 +324,10 @@ const Home = (props: any) => {
             <h5 style={{ textAlign: "center" }}>No trees were harmed with this receipt</h5>
           </div>
 
-          <img style={{ width: "100%" }} src={discounts[0].url} alt="Barcode" />
+          {discounts.map((discount: any) => {
+            <img style={{ width: "100%" }} src={discount.url} alt="Barcode" />
 
+          })}
         </div>
       </div>
     </div>
@@ -395,8 +396,6 @@ export const getServerSideProps: GetServerSideProps = async () => {
     }
   }
 
-  /* console.log(receipt[0]); */
-  console.log("hei", discounts);
   return {
     props: {
       discounts,
