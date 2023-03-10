@@ -324,10 +324,8 @@ const Home = (props: any) => {
             <h5 style={{ textAlign: "center" }}>No trees were harmed with this receipt</h5>
           </div>
 
-          {discounts.map((discount: any) => {
-            <img style={{ width: "100%" }} src={discount.url} alt="Barcode" />
+          <img style={{ width: "100%" }} src={discounts[0].url} alt="Barcode" />
 
-          })}
         </div>
       </div>
     </div>
