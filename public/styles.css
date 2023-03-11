@@ -89,7 +89,6 @@ h5 {
 .receipt-wrapper {
   position: relative;
   z-index: 10;
-  padding-bottom: 80px;
 }
 
 .receipt-header {
@@ -105,7 +104,7 @@ h5 {
   width: auto;
   margin: auto;
   background-size: contain;
-  background-position: center;
+  background-position: left;
   background-repeat: no-repeat;
 }
 
