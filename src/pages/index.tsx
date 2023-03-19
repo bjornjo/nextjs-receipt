@@ -1,4 +1,4 @@
-import { GetServerSideProps } from 'next';
+import { GetServerSideProps, GetStaticProps } from 'next';
 import bwipjs from 'bwip-js';
 import { Receipt } from '@/utils/types/receipt';
 import logo from "../../public/zeipt.svg";
@@ -564,7 +564,7 @@ const Home = (props: any) => {
 }
 export default Home;
 
-export const getServerSideProps: GetServerSideProps = async () => {
+export const getStaticProps: GetStaticProps = async () => {
   let fetchAuth = await fetch("https://staging.api.zeipt.io/auth/public", {
     method: "POST",
     headers: {
