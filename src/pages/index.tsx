@@ -39,11 +39,11 @@ const Home = (props: any) => {
 
               <div className="flex">
                 <div className="text-group">
-                  <h5>{lang == "NO" ? "Organisasjonsnr" : "Organization nr"}</h5>
+                  <h5>{lang == "no" ? "Organisasjonsnr" : "Organization nr"}</h5>
                   <p>{receipt.merchant.org_number}</p>
                 </div>
                 <div className="text-grou">
-                  <h5>{lang == "NO" ? "Kvitteringsnr" : "Receipt nr"}</h5>
+                  <h5>{lang == "no" ? "Kvitteringsnr" : "Receipt nr"}</h5>
 
                   <p>{receipt.receipt_number}</p>
                 </div>
@@ -51,7 +51,7 @@ const Home = (props: any) => {
 
               <div className="flex">
                 <div className="text-group">
-                  <h5>{lang == "NO" ? "Adresse" : "Address"}</h5>
+                  <h5>{lang == "no" ? "Adresse" : "Address"}</h5>
                   <p>{receipt.merchant.purchase_location?.address},</p>
                   <p>{receipt.merchant.purchase_location?.zip_code &&
                     receipt.merchant.purchase_location?.zip_code +
@@ -59,7 +59,7 @@ const Home = (props: any) => {
                     {receipt.merchant.purchase_location?.city}, {receipt.merchant.purchase_location?.purchase_country_code}</p>
                 </div>
                 <div className="text-group">
-                  <h5>{lang == "NO" ? "Dato" : "Date"}</h5>
+                  <h5>{lang == "no" ? "Dato" : "Date"}</h5>
                   <p>
                     {new Date(
                       receipt.timestamp.substring(0, 19)
@@ -72,13 +72,13 @@ const Home = (props: any) => {
                 <div className='flex'>
                   {receipt.merchant.email &&
                     <div className='text-group'>
-                      <h5>{lang == "NO" ? "Epost" : "Email"}</h5>
+                      <h5>{lang == "no" ? "Epost" : "Email"}</h5>
                       <p>{receipt.merchant.email}</p>
                     </div>
                   }
                   {receipt.merchant.telephone &&
                     <div className='text-group'>
-                      <h5>{lang == "NO" ? "Telefon" : "Phone"}</h5>
+                      <h5>{lang == "no" ? "Telefon" : "Phone"}</h5>
                       <p>{receipt.merchant.telephone.country_calling_code +
                         " " +
                         receipt.merchant.telephone?.number}</p>
@@ -90,7 +90,7 @@ const Home = (props: any) => {
               <div className='flex'>
                 {receipt.merchant.website &&
                   <div className='text-group'>
-                    <h5>{lang == "NO" ? "Nettside" : "Website"}</h5>
+                    <h5>{lang == "no" ? "Nettside" : "Website"}</h5>
                     <a target={"_blank"} href={"https://" + receipt.merchant.website}>
                       <p>{receipt.merchant.website}</p>
                     </a>
@@ -100,7 +100,7 @@ const Home = (props: any) => {
 
                 {receipt.relate_order_numbers && receipt.relate_order_numbers.length > 0 &&
                   <div className='text-group'>
-                    <h5>{lang == "NO" ? "Ordrenr" : "Order nr"}</h5>
+                    <h5>{lang == "no" ? "Ordrenr" : "Order nr"}</h5>
                     {receipt.relate_order_numbers.map(function (ordernr, index) {
                       return (
                         <p key={"ordernr-" + index}>{ordernr} </p>
@@ -115,8 +115,8 @@ const Home = (props: any) => {
             {/* Article header */}
             <div className="box head">
               <div className="split">
-                <h5><span>{lang == "NO" ? "Artikkel" : "Article"}</span></h5>
-                <h5><span>{lang == "NO" ? "Beløp" : "Sum"}</span></h5>
+                <h5><span>{lang == "no" ? "Artikkel" : "Article"}</span></h5>
+                <h5><span>{lang == "no" ? "Beløp" : "Sum"}</span></h5>
               </div>
             </div>
 
@@ -131,7 +131,7 @@ const Home = (props: any) => {
                     </p>
                     {article.return &&
                       <div className='tag'>
-                        {lang == "NO" ? "Returnert" : "Returned"}
+                        {lang == "no" ? "Returnert" : "Returned"}
                       </div>
                     }
                     {article.quantity &&
@@ -159,7 +159,7 @@ const Home = (props: any) => {
                     }
                     {article.additions?.art_recycling_fee || article.additions?.quantity_recycling_fee ?
                       <h5>
-                        {lang == "NO" ? "Pant: " : "Recycling: "}
+                        {lang == "no" ? "Pant: " : "Recycling: "}
                         {parseFloat((article.additions.art_recycling_fee || (article.additions.quantity_recycling_fee! * article.quantity!)).toString())
                           .toLocaleString(receipt.merchant.merchant_country_code, {
                             useGrouping: true,
@@ -169,9 +169,9 @@ const Home = (props: any) => {
 
                       </h5> : null
                     }
-                    {article.reference_of_origin?.reason_for_return && <h5>{lang == "NO" ? "Årsak for retur: " : "Reason for return: "}{article.reference_of_origin?.reason_for_return}</h5>}
-                    {article.art_number && <h5>{lang == "NO" ? "Artikkelnr: " : "Article number: "}{article.art_number}</h5>}
-                    {article.art_description && <h5>{lang == "NO" ? "Beskrivelse: " : "Description: "}{article.art_description}</h5>}
+                    {article.reference_of_origin?.reason_for_return && <h5>{lang == "no" ? "Årsak for retur: " : "Reason for return: "}{article.reference_of_origin?.reason_for_return}</h5>}
+                    {article.art_number && <h5>{lang == "no" ? "Artikkelnr: " : "Article number: "}{article.art_number}</h5>}
+                    {article.art_description && <h5>{lang == "no" ? "Beskrivelse: " : "Description: "}{article.art_description}</h5>}
                   </div>
 
                   <div>
@@ -210,7 +210,7 @@ const Home = (props: any) => {
             <div className="box head">
 
               <div className="split">
-                <p>{lang == "NO" ? "Totalsum" : "Total sum"}</p>
+                <p>{lang == "no" ? "Totalsum" : "Total sum"}</p>
                 <p className="amount">
                   {parseFloat(receipt.total.final_price.toString()).toLocaleString(receipt.merchant.merchant_country_code, {
                     useGrouping: true,
@@ -238,8 +238,8 @@ const Home = (props: any) => {
               {receipt.total.art_vat_amount_array &&
                 <div className='split' style={{ marginTop: '10px' }}>
                   <h5>{receipt.total.total_vat_name} %</h5>
-                  <h5>{lang == "NO" ? "Grunnlag" : "Base"}</h5>
-                  <h5>{lang == "NO" ? "Totalt" : "Total"}</h5>
+                  <h5>{lang == "no" ? "Grunnlag" : "Base"}</h5>
+                  <h5>{lang == "no" ? "Totalt" : "Total"}</h5>
                 </div>}
               {receipt.total.art_vat_amount_array && receipt.total.art_vat_amount_array.map((vat, index) => {
                 return (
@@ -281,7 +281,7 @@ const Home = (props: any) => {
                 <div className="box" key={"payment-" + index}>
                   <div className='split'>
                     <div>
-                      <p>{lang == "NO" ? "Betaling" : "Payment"}</p>
+                      <p>{lang == "no" ? "Betaling" : "Payment"}</p>
                     </div>
                     <div>
                       <p className="amount">
@@ -304,7 +304,7 @@ const Home = (props: any) => {
                     {!!payment.tvr_nr && <p className="amount small">TVR: {payment.tvr_nr}</p>}
                     {!!payment.tsi_nr && <p className="amount small">TSI: {payment.tsi_nr}</p>}
                     {!!payment.ref_nr && <p className="amount small">Ref.: {payment.ref_nr}</p>}
-                    {!!payment.response_code && <p className="amount small">{lang == "NO" ? "Respons: " : "Response: "}{payment.response_code}</p>}
+                    {!!payment.response_code && <p className="amount small">{lang == "no" ? "Respons: " : "Response: "}{payment.response_code}</p>}
                     {!!payment.currency && <p className="amount small">{payment.currency}</p>}
                     {!!payment.payment_amount && <p className="amount small">{payment.payment_amount}</p>}
                     {!!payment.tip_amount && <p className="amount small">+ {payment.tip_amount} tips</p>}
@@ -317,7 +317,7 @@ const Home = (props: any) => {
             {(receipt.extra_receipt_view?.cashier_goodbye_message || receipt.extra_receipt_view?.opening_hours) &&
               <div className="box white">
                 {receipt.extra_receipt_view?.cashier_goodbye_message && <h5>{receipt.extra_receipt_view?.cashier_goodbye_message}<br /><br /></h5>}
-                {receipt.extra_receipt_view?.opening_hours && <h5>{lang == "NO" ? "Åpningstider: " : "Opening hours: "}<br></br>
+                {receipt.extra_receipt_view?.opening_hours && <h5>{lang == "no" ? "Åpningstider: " : "Opening hours: "}<br></br>
                   {receipt.extra_receipt_view?.opening_hours}</h5>}
               </div>
             }
@@ -326,7 +326,7 @@ const Home = (props: any) => {
             <div className="box" style={{ background: 'none' }}>
               <div className="merchant-logo" style={{ "backgroundImage": "url(" + regnskogfondet.src + ")" }}>
               </div>
-              <h5>{lang == "NO" ? "Ingen trær ble skadet med denne kvitteringen" : "No trees were harmed with this receipt"}</h5>
+              <h5>{lang == "no" ? "Ingen trær ble skadet med denne kvitteringen" : "No trees were harmed with this receipt"}</h5>
             </div>
 
             {/* Return / bar code */}
@@ -337,7 +337,7 @@ const Home = (props: any) => {
 
                 {receipt.extra_receipt_view?.return_policy?.policy_description &&
                   <div style={{ marginBottom: 10 }}>
-                    <h5>{lang == "NO" ? "Returpolicy" : "Return policy"}</h5>
+                    <h5>{lang == "no" ? "Returpolicy" : "Return policy"}</h5>
                     <p>{receipt.extra_receipt_view?.return_policy?.policy_description}</p>
                   </div>
                 }
@@ -345,7 +345,7 @@ const Home = (props: any) => {
                 {receipt.extra_receipt_view?.return_policy?.policy_end_date &&
                   <div style={{ marginBottom: 10 }}>
                     <h5>
-                      {lang == "NO" ? "Siste dag for retur: " : "Last day of return: "}
+                      {lang == "no" ? "Siste dag for retur: " : "Last day of return: "}
                     </h5>
                     <p style={{ fontSize: '12px' }}>
 
@@ -383,12 +383,12 @@ const Home = (props: any) => {
               return (
                 <div key={"discounts" + index}>
                   <div className="box head">
-                    <h5><span>{lang == "NO" ? "Rabatt" : "Discount"}</span></h5>
+                    <h5><span>{lang == "no" ? "Rabatt" : "Discount"}</span></h5>
                   </div>
                   <div className="box">
 
                     <div style={{ marginBottom: 10 }}>
-                      <h5>{lang == "NO" ? "Rabatt på artikkel: " : "Discount on article: "}</h5>
+                      <h5>{lang == "no" ? "Rabatt på artikkel: " : "Discount on article: "}</h5>
 
                       {discount.art_numbers?.map((discount_art_nr, index) => {
                         return <p key={"discount_art_nr" + index}>{discount_art_nr}</p>
@@ -397,18 +397,18 @@ const Home = (props: any) => {
                     </div>
 
                     <div style={{ marginBottom: 10 }}>
-                      <h5>{lang == "NO" ? "Rabattsum" : "Discount amount: "}</h5>
+                      <h5>{lang == "no" ? "Rabattsum" : "Discount amount: "}</h5>
                       <p style={{ fontSize: '12px' }}>{discount.amount}</p>
                     </div>
 
                     <div style={{ marginBottom: 10 }}>
-                      <h5>{lang == "NO" ? "Rabattprosent " : "Discount percentage: "}</h5>
+                      <h5>{lang == "no" ? "Rabattprosent " : "Discount percentage: "}</h5>
                       <p style={{ fontSize: '12px' }}>{discount.percentage}</p>
                     </div>
 
                     {discount.expiration_date &&
                       <div style={{ marginBottom: 10 }}>
-                        <h5>{lang == "NO" ? "Utløpsdato" : "Expiration date: "}</h5>
+                        <h5>{lang == "no" ? "Utløpsdato" : "Expiration date: "}</h5>
                         <p style={{ fontSize: '12px' }}>
 
                           {new Date(
@@ -466,7 +466,7 @@ const Home = (props: any) => {
                         {article.specified.floor_number &&
                           <div style={{ marginBottom: 10 }}>
                             <h5>
-                              {lang == "NO" ? "Etasjenummer" : "Floor number"}
+                              {lang == "no" ? "Etasjenummer" : "Floor number"}
                             </h5>
                             <p>{article.specified.floor_number}</p>
                           </div>
@@ -474,7 +474,7 @@ const Home = (props: any) => {
                         {article.specified.room_number &&
                           <div style={{ marginBottom: 10 }}>
                             <h5>
-                              {lang == "NO" ? "Romnummer" : "Room number"}
+                              {lang == "no" ? "Romnummer" : "Room number"}
                             </h5>
                             <p>{article.specified.room_number}</p>
                           </div>
@@ -482,7 +482,7 @@ const Home = (props: any) => {
                         {article.specified.entrance &&
                           <div style={{ marginBottom: 10 }}>
                             <h5>
-                              {lang == "NO" ? "Inngang" : "Entrance"}
+                              {lang == "no" ? "Inngang" : "Entrance"}
                             </h5>
                             <p>{article.specified.entrance}</p>
                           </div>
@@ -490,7 +490,7 @@ const Home = (props: any) => {
                         {article.specified.row_number &&
                           <div style={{ marginBottom: 10 }}>
                             <h5>
-                              {lang == "NO" ? "Radnummer" : "Row number"}
+                              {lang == "no" ? "Radnummer" : "Row number"}
                             </h5>
                             <p>{article.specified.row_number}</p>
                           </div>
@@ -498,7 +498,7 @@ const Home = (props: any) => {
                         {article.specified.seat_number &&
                           <div style={{ marginBottom: 10 }}>
                             <h5>
-                              {lang == "NO" ? "Setenummer" : "Seat number"}
+                              {lang == "no" ? "Setenummer" : "Seat number"}
                             </h5>
                             <p>{article.specified.seat_number}</p>
                           </div>
@@ -506,7 +506,7 @@ const Home = (props: any) => {
                         {article.specified.event_start &&
                           <div style={{ marginBottom: 10 }}>
                             <h5>
-                              {lang == "NO" ? "Arrangement starter" : "Event start"}
+                              {lang == "no" ? "Arrangement starter" : "Event start"}
                             </h5>
                             <p>{
                               new Date(
@@ -519,7 +519,7 @@ const Home = (props: any) => {
                         {article.specified.event_ending &&
                           <div style={{ marginBottom: 10 }}>
                             <h5>
-                              {lang == "NO" ? "Arrangement avslutter" : "Event end"}
+                              {lang == "no" ? "Arrangement avslutter" : "Event end"}
                             </h5>
                             <p>
                               {
@@ -533,7 +533,7 @@ const Home = (props: any) => {
                         {article.specified.expiration_date &&
                           <div style={{ marginBottom: 10 }}>
                             <h5>
-                              {lang == "NO" ? "Utløpsdato" : "Expiration date"}
+                              {lang == "no" ? "Utløpsdato" : "Expiration date"}
                             </h5>
 
                             <p>{
