@@ -5,6 +5,7 @@ import logo from "../../../../public/zeipt.svg";
 import regnskogfondet from "../../../../public/regnskogfondet.png";
 import QRCode from "react-qr-code";
 
+
 const Home = (props: any) => {
 
     let receipt = props.receipt[0] as Receipt,
@@ -581,12 +582,12 @@ export async function getStaticPaths() {
 
     // Get the paths we want to pre-render based on posts
     const paths = [{
-        params: { gcid: "01G3EZTHEHRGQMBMYFHCC34EHY", transnr: "01G3EZTHEHEYCQCCT21EWT5MTR" },
+        params: { gcid: "", transnr: "" },
     }]
 
     // We'll pre-render only these paths at build time.
     // { fallback: false } means other routes should 404.
-    return { paths, fallback: false }
+    return { paths, fallback: true }
 }
 export const getStaticProps: GetStaticProps = async ({ params }) => {
 

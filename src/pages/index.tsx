@@ -4,20 +4,22 @@ import { Receipt } from '@/utils/types/receipt';
 import logo from "../../public/zeipt.svg";
 import regnskogfondet from "../../public/regnskogfondet.png";
 import QRCode from "react-qr-code";
-import { describe } from 'node:test';
+import { useRouter } from 'next/router';
+
 
 const Home = (props: any) => {
+
   let receipt = props.receipt[0] as Receipt,
     discounts = props.discounts as any,
     bar_code = props.bar_code as any,
     tickets = props.tickets as any
 
 
+
   return (
     <div className="wrapper">
       <div className="receipt-wrapper">
         <div className="receipt">
-
 
           {/* Merchant logo */}
           <div className="receipt-header">
@@ -332,226 +334,241 @@ const Home = (props: any) => {
           </div>
 
           {/* Return / bar code */}
-          <div className="box">
+          {receipt.extra_receipt_view?.return_policy?.policy_description ||
+            receipt.extra_receipt_view?.return_policy?.policy_end_date ||
+            receipt.extra_receipt_view?.bar_code?.value ?
+            <div className="box">
 
-            {receipt.extra_receipt_view?.return_policy?.policy_description &&
-              <div style={{ marginBottom: 10 }}>
-                <h5>Return policy</h5>
-                <p>{receipt.extra_receipt_view?.return_policy?.policy_description}</p>
-              </div>
-            }
-            {/* Policy end date */}
-            {receipt.extra_receipt_view?.return_policy?.policy_end_date &&
-              <div style={{ marginBottom: 10 }}>
-                <h5>Last day of return:
-                </h5>
-                <p style={{ fontSize: '12px' }}>
+              {receipt.extra_receipt_view?.return_policy?.policy_description &&
+                <div style={{ marginBottom: 10 }}>
+                  <h5>Return policy</h5>
+                  <p>{receipt.extra_receipt_view?.return_policy?.policy_description}</p>
+                </div>
+              }
+              {/* Policy end date */}
+              {receipt.extra_receipt_view?.return_policy?.policy_end_date &&
+                <div style={{ marginBottom: 10 }}>
+                  <h5>Last day of return:
+                  </h5>
+                  <p style={{ fontSize: '12px' }}>
 
-                  {new Date(
-                    receipt.extra_receipt_view?.return_policy?.policy_end_date
-                  ).toLocaleDateString("no-NO", {
-                    year: "numeric",
-                    month: "short",
-                    day: "numeric",
-                    hour: "numeric",
-                    minute: "numeric",
-                  })}</p>
-              </div>
-            }
-            {receipt.extra_receipt_view?.bar_code?.value && receipt.extra_receipt_view.bar_code.encoding != "qr" ?
-              <div>
-                <img style={{ width: "100%" }} src={bar_code} alt="Barcode" />
-                <p className="amount" style={{ textAlign: 'center' }}>{receipt.extra_receipt_view?.bar_code.display_value && receipt.extra_receipt_view?.bar_code.display_value}</p>
-              </div>
-              : receipt.extra_receipt_view?.bar_code?.value && receipt.extra_receipt_view.bar_code.encoding == "qr" ?
+                    {new Date(
+                      receipt.extra_receipt_view?.return_policy?.policy_end_date
+                    ).toLocaleDateString("no-NO", {
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                      hour: "numeric",
+                      minute: "numeric",
+                    })}</p>
+                </div>
+              }
+              {receipt.extra_receipt_view?.bar_code?.value && receipt.extra_receipt_view.bar_code.encoding != "qr" ?
                 <div>
-                  <QRCode style={{
-                    height: 100,
-                    width: 100
-                  }} value={bar_code.value} />
+                  <img style={{ width: "100%" }} src={bar_code} alt="Barcode" />
                   <p className="amount" style={{ textAlign: 'center' }}>{receipt.extra_receipt_view?.bar_code.display_value && receipt.extra_receipt_view?.bar_code.display_value}</p>
                 </div>
-                : null
-            }
-          </div>
+                : receipt.extra_receipt_view?.bar_code?.value && receipt.extra_receipt_view.bar_code.encoding == "qr" ?
+                  <div>
+                    <QRCode style={{
+                      height: 100,
+                      width: 100
+                    }} value={bar_code.value} />
+                    <p className="amount" style={{ textAlign: 'center' }}>{receipt.extra_receipt_view?.bar_code.display_value && receipt.extra_receipt_view?.bar_code.display_value}</p>
+                  </div>
+                  : null
+              }
+            </div>
+            : null}
 
           {/* Discounts */}
           {receipt.extended_receipt_logic?.discounts && receipt.extended_receipt_logic?.discounts.map((discount, index) => {
             return (
-              <div className="box" key={"discounts" + index}>
-
-                <div style={{ marginBottom: 10 }}>
-                  <h5>Discount on article:</h5>
-
-                  {discount.art_numbers?.map((discount_art_nr, index) => {
-                    return <p key={"discount_art_nr" + index}>{discount_art_nr}</p>
-                  })}
-
+              <div key={"discounts" + index}>
+                <div className="box head">
+                  <h5><span style={{ color: "black" }}>Discount</span></h5>
                 </div>
+                <div className="box">
 
-                <div style={{ marginBottom: 10 }}>
-                  <h5>Discount amount:</h5>
-                  <p style={{ fontSize: '12px' }}>{discount.amount}</p>
-                </div>
-
-                <div style={{ marginBottom: 10 }}>
-                  <h5>Discount percentage:</h5>
-                  <p style={{ fontSize: '12px' }}>{discount.percentage}</p>
-                </div>
-
-                {discount.expiration_date &&
                   <div style={{ marginBottom: 10 }}>
-                    <h5>Expiration date:</h5>
-                    <p style={{ fontSize: '12px' }}>
+                    <h5>Discount on article:</h5>
 
-                      {new Date(
-                        discount.expiration_date
-                      ).toLocaleDateString("no-NO", {
-                        year: "numeric",
-                        month: "short",
-                        day: "numeric",
-                        hour: "numeric",
-                        minute: "numeric",
-                      })}
-                    </p>
+                    {discount.art_numbers?.map((discount_art_nr, index) => {
+                      return <p key={"discount_art_nr" + index}>{discount_art_nr}</p>
+                    })}
+
                   </div>
-                }
 
-                {/* Bar / QR code */}
-                <div>
-                  {discount.bar_code?.value && discount.bar_code.encoding != "qr" ?
-                    <div>
-                      <img key={"discount-" + index} style={{ width: "100%" }} src={discounts[index].url} alt="Barcode" />
-                      <p className="amount" style={{ textAlign: 'center' }}>{discount.bar_code.display_value && discount.bar_code.display_value}</p>
+                  <div style={{ marginBottom: 10 }}>
+                    <h5>Discount amount:</h5>
+                    <p style={{ fontSize: '12px' }}>{discount.amount}</p>
+                  </div>
+
+                  <div style={{ marginBottom: 10 }}>
+                    <h5>Discount percentage:</h5>
+                    <p style={{ fontSize: '12px' }}>{discount.percentage}</p>
+                  </div>
+
+                  {discount.expiration_date &&
+                    <div style={{ marginBottom: 10 }}>
+                      <h5>Expiration date:</h5>
+                      <p style={{ fontSize: '12px' }}>
+
+                        {new Date(
+                          discount.expiration_date
+                        ).toLocaleDateString("no-NO", {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                          hour: "numeric",
+                          minute: "numeric",
+                        })}
+                      </p>
                     </div>
-                    : discount.bar_code?.value && discount.bar_code.encoding == "qr" ?
+                  }
+
+                  {/* Bar / QR code */}
+                  <div>
+                    {discount.bar_code?.value && discount.bar_code.encoding != "qr" ?
                       <div>
-                        <QRCode style={{
-                          height: 100,
-                          width: 100
-                        }} value={discount.bar_code.value} />
+                        <img key={"discount-" + index} style={{ width: "100%" }} src={discounts[index].url} alt="Barcode" />
                         <p className="amount" style={{ textAlign: 'center' }}>{discount.bar_code.display_value && discount.bar_code.display_value}</p>
                       </div>
-                      : null
-                  }
-                </div>
+                      : discount.bar_code?.value && discount.bar_code.encoding == "qr" ?
+                        <div>
+                          <QRCode style={{
+                            height: 100,
+                            width: 100
+                          }} value={discount.bar_code.value} />
+                          <p className="amount" style={{ textAlign: 'center' }}>{discount.bar_code.display_value && discount.bar_code.display_value}</p>
+                        </div>
+                        : null
+                    }
+                  </div>
 
-              </div>)
+                </div>
+              </div>
+            )
           })}
 
           {/* Tickets */}
           {receipt.articles?.map((article, index) => {
             if (article.bar_codes?.length && article.bar_codes?.length > 0) return (
-              <div className='box' key={"article-ticket" + index}>
+              <div key={"article-ticket" + index}>
+                <div className="box head">
+                  <h5><span style={{ color: "black" }}>{article.type === 'ticket' ? "Ticket" : article.type === 'credit' ? "Credit" : article.type}</span></h5>
+                </div>
+                <div className='box'>
 
 
-                {article.art_name && <p style={{ marginBottom: 10 }}>{article.art_name}</p>}
+                  {article.art_name && <p style={{ marginBottom: 10 }}>{article.art_name}</p>}
 
-                {/* Specified info */}
-                {article.specified &&
-                  <>
-                    {article.specified.floor_number &&
-                      <div style={{ marginBottom: 10 }}>
-                        <h5>
-                          Floor number
-                        </h5>
-                        <p>{article.specified.floor_number}</p>
-                      </div>
-                    }
-                    {article.specified.room_number &&
-                      <div style={{ marginBottom: 10 }}>
-                        <h5>
-                          Room number
-                        </h5>
-                        <p>{article.specified.room_number}</p>
-                      </div>
-                    }
-                    {article.specified.entrance &&
-                      <div style={{ marginBottom: 10 }}>
-                        <h5>
-                          Entrance
-                        </h5>
-                        <p>{article.specified.entrance}</p>
-                      </div>
-                    }
-                    {article.specified.row_number &&
-                      <div style={{ marginBottom: 10 }}>
-                        <h5>
-                          Row number
-                        </h5>
-                        <p>{article.specified.row_number}</p>
-                      </div>
-                    }
-                    {article.specified.seat_number &&
-                      <div style={{ marginBottom: 10 }}>
-                        <h5>
-                          Seat number
-                        </h5>
-                        <p>{article.specified.seat_number}</p>
-                      </div>
-                    }
-                    {article.specified.event_start &&
-                      <div style={{ marginBottom: 10 }}>
-                        <h5>
-                          Event start
-                        </h5>
-                        <p>{
-                          new Date(
-                            article.specified.event_start.substring(0, 19)
-                          ).toLocaleDateString(receipt.merchant.merchant_country_code, { year: "numeric", month: "numeric", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" })
-                        }
-                        </p>
-                      </div>
-                    }
-                    {article.specified.event_ending &&
-                      <div style={{ marginBottom: 10 }}>
-                        <h5>
-                          Event ending
-                        </h5>
-                        <p>
-                          {
+                  {/* Specified info */}
+                  {article.specified &&
+                    <>
+                      {article.specified.floor_number &&
+                        <div style={{ marginBottom: 10 }}>
+                          <h5>
+                            Floor number
+                          </h5>
+                          <p>{article.specified.floor_number}</p>
+                        </div>
+                      }
+                      {article.specified.room_number &&
+                        <div style={{ marginBottom: 10 }}>
+                          <h5>
+                            Room number
+                          </h5>
+                          <p>{article.specified.room_number}</p>
+                        </div>
+                      }
+                      {article.specified.entrance &&
+                        <div style={{ marginBottom: 10 }}>
+                          <h5>
+                            Entrance
+                          </h5>
+                          <p>{article.specified.entrance}</p>
+                        </div>
+                      }
+                      {article.specified.row_number &&
+                        <div style={{ marginBottom: 10 }}>
+                          <h5>
+                            Row number
+                          </h5>
+                          <p>{article.specified.row_number}</p>
+                        </div>
+                      }
+                      {article.specified.seat_number &&
+                        <div style={{ marginBottom: 10 }}>
+                          <h5>
+                            Seat number
+                          </h5>
+                          <p>{article.specified.seat_number}</p>
+                        </div>
+                      }
+                      {article.specified.event_start &&
+                        <div style={{ marginBottom: 10 }}>
+                          <h5>
+                            Event start
+                          </h5>
+                          <p>{
                             new Date(
-                              article.specified.event_ending.substring(0, 19)
+                              article.specified.event_start.substring(0, 19)
                             ).toLocaleDateString(receipt.merchant.merchant_country_code, { year: "numeric", month: "numeric", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" })
                           }
-                        </p>
-                      </div>
-                    }
-                    {article.specified.expiration_date &&
-                      <div style={{ marginBottom: 10 }}>
-                        <h5>
-                          Expiration date
-                        </h5>
+                          </p>
+                        </div>
+                      }
+                      {article.specified.event_ending &&
+                        <div style={{ marginBottom: 10 }}>
+                          <h5>
+                            Event ending
+                          </h5>
+                          <p>
+                            {
+                              new Date(
+                                article.specified.event_ending.substring(0, 19)
+                              ).toLocaleDateString(receipt.merchant.merchant_country_code, { year: "numeric", month: "numeric", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" })
+                            }
+                          </p>
+                        </div>
+                      }
+                      {article.specified.expiration_date &&
+                        <div style={{ marginBottom: 10 }}>
+                          <h5>
+                            Expiration date
+                          </h5>
 
-                        <p>{
-                          new Date(
-                            article.specified.expiration_date.substring(0, 19)
-                          ).toLocaleDateString(receipt.merchant.merchant_country_code, { year: "numeric", month: "numeric", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" })
+                          <p>{
+                            new Date(
+                              article.specified.expiration_date.substring(0, 19)
+                            ).toLocaleDateString(receipt.merchant.merchant_country_code, { year: "numeric", month: "numeric", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" })
 
-                        }</p>
-                      </div>
-                    }
-                  </>
-                }
-                {/* Bar / QR code */}
-                <div style={{ display: "flex", justifyContent: "center" }}>
-                  {article.bar_codes[0].encoding != "qr" ?
-                    <div>
-                      <img key={"discount-" + index} style={{ width: "100%" }} src={tickets[index].url} alt="Barcode" />
-                      <p className="amount" style={{ textAlign: 'center' }}>{article.bar_codes[0].display_value && article.bar_codes[0].display_value}</p>
-                    </div>
-
-                    : article.bar_codes[0].encoding == "qr" ?
+                          }</p>
+                        </div>
+                      }
+                    </>
+                  }
+                  {/* Bar / QR code */}
+                  <div style={{ display: "flex", justifyContent: "center" }}>
+                    {article.bar_codes[0].encoding != "qr" ?
                       <div>
-                        <QRCode style={{
-                          height: 100,
-                          width: 100
-                        }} value={article.bar_codes[0].value} />
+                        <img key={"discount-" + index} style={{ width: "100%" }} src={tickets[index].url} alt="Barcode" />
                         <p className="amount" style={{ textAlign: 'center' }}>{article.bar_codes[0].display_value && article.bar_codes[0].display_value}</p>
                       </div>
-                      :
-                      null
-                  }
+
+                      : article.bar_codes[0].encoding == "qr" ?
+                        <div>
+                          <QRCode style={{
+                            height: 100,
+                            width: 100
+                          }} value={article.bar_codes[0].value} />
+                          <p className="amount" style={{ textAlign: 'center' }}>{article.bar_codes[0].display_value && article.bar_codes[0].display_value}</p>
+                        </div>
+                        :
+                        null
+                    }
+                  </div>
                 </div>
               </div>
             )
@@ -564,7 +581,10 @@ const Home = (props: any) => {
 }
 export default Home;
 
-export const getStaticProps: GetStaticProps = async () => {
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { query } = context
+
   let fetchAuth = await fetch("https://staging.api.zeipt.io/auth/public", {
     method: "POST",
     headers: {
@@ -572,7 +592,7 @@ export const getStaticProps: GetStaticProps = async () => {
     },
     body: JSON.stringify({
       api_key: "6405ff6a-f4d2-451a-9ed2-7173aede9e45",
-      provider_gcid: "01G3EZTHEHRGQMBMYFHCC34EHY"
+      provider_gcid: query?.gcid
     }),
   })
     .then((res) => res.json())
@@ -584,8 +604,8 @@ export const getStaticProps: GetStaticProps = async () => {
       "Authorization": "Bearer " + fetchAuth
     },
     body: JSON.stringify({
-      provider_gcid: "01G3EZTHEHRGQMBMYFHCC34EHY",
-      zeipt_receipt_transnrs: ["01G3EZTHEHEYCQCCT21EWT5MTR"],
+      provider_gcid: query?.gcid,
+      zeipt_receipt_transnrs: [query?.transnr],
     }),
   })
     .then((response) => {
@@ -676,4 +696,4 @@ export const getStaticProps: GetStaticProps = async () => {
       tickets
     },
   };
-};
+}
