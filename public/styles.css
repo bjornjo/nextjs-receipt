@@ -11,9 +11,9 @@ body {
     Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
     "Segoe UI Symbol";
   min-height: 100vh;
+  margin: 0;
 }
 html {
-  background: #f8f8f8;
   box-sizing: border-box;
 }
 * {
@@ -84,6 +84,9 @@ h5 {
   max-width: 400px;
   margin: auto;
   border: 1px solid #ececec;
+  background: #f8f8f8;
+  border-radius: 10px;
+  overflow: hidden;
 }
 
 .receipt-wrapper {
@@ -114,13 +117,18 @@ h5 {
   display: block;
   border-bottom: 1px solid #ececec;
 }
-
+.box.white {
+  background-color: white;
+}
 .box p:last-of-type {
   margin-bottom: 0px;
 }
 .box.head {
   padding: 10px 20px;
   background-color: #f0f0f0;
+}
+.box.head h5 {
+  color: black;
 }
 .split {
   display: flex;
@@ -147,4 +155,40 @@ h5 {
   display: inline-block;
   color: #949494;
   padding: 2px 5px;
+}
+
+/* Templates */
+
+.template {
+  padding: 10px;
+}
+
+/* Template 1 */
+.template.template-1 {
+  background-color: #1c1c1c;
+}
+.template.template-1 * {
+  border-color: #000000;
+}
+.template.template-1 .box.head {
+  background-color: #171717;
+}
+.template.template-1 .wrapper {
+  background-color: #212121;
+}
+.template.template-1 p,
+.template.template-1 h2 {
+  color: white;
+}
+.template.template-1 .box.head h5 {
+  color: white;
+}
+.template.template-1 .article {
+  background-color: #1b1717;
+}
+.template.template-1 .receipt-header {
+  background-color: #000;
+}
+.template.template-1 .box.white {
+  background-color: #1b1717;
 }
