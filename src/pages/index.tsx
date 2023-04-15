@@ -5,24 +5,39 @@ import logo from "../../public/zeipt.svg";
 import regnskogfondet from "../../public/regnskogfondet.png";
 import QRCode from "react-qr-code";
 import { useRouter } from 'next/router';
+import { useEffect, useRef, useState } from 'react';
+
 
 
 const Home = (props: any) => {
+
+  const [popupOpen, showPopup] = useState({ type: "", index: -1 })
 
   let receipt = props.receipt[0] as Receipt,
     discounts = props.discounts as any,
     bar_code = props.bar_code as any,
     tickets = props.tickets as any,
     lang = props.lang as any,
-    template = props.template as any
+    template = props.template as any,
+    pdf = props.pdf as boolean
 
   console.log(receipt);
+  const openPopup = (type: any, index?: number) => {
+    showPopup({ type: type, index: index !== undefined ? index : -1 })
+  };
+
+
 
   return (
-    <div className={"template template-" + template}>
-      <div className="wrapper">
+
+    <div className={"template template-" + template} >
+
+
+
+      <div className="wrapper" >
         <div className="receipt-wrapper">
           <div className="receipt">
+
 
             {/* Merchant logo */}
             <div className="receipt-header">
@@ -122,89 +137,10 @@ const Home = (props: any) => {
 
             {/* Articles */}
             {receipt.articles && receipt.articles.map((article, index) => {
-              return (<div className="article" key={"article-" + index}>
-                <div className="split">
-
-                  <div>
-                    <p>
-                      {article.art_name}
-                    </p>
-                    {article.return &&
-                      <div className='tag'>
-                        {lang == "no" ? "Returnert" : "Returned"}
-                      </div>
-                    }
-                    {article.quantity &&
-                      <h5>
-                        {article.quantity} {article.quantity_type}
-                      </h5>
-                    }
-                    {article.subtractions?.discounts && article.subtractions.discounts.length > 0 &&
-                      article.subtractions.discounts.map((discount: any, i: any) => (
-                        <h5 key={"discount" + i}>
-
-                          {discount.description ? (discount.description + ": ") : null}
-                          -{discount.per_quantity ? parseFloat(((discount?.amount || 0) * (article.quantity || 0)).toString()).toLocaleString(receipt.merchant.merchant_country_code, {
-                            useGrouping: true,
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2,
-                          }) : parseFloat((discount?.amount || 0).toString()).toLocaleString(receipt.merchant.merchant_country_code, {
-                            useGrouping: true,
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2,
-                          })}
-                        </h5>
-
-                      ))
-                    }
-                    {article.additions?.art_recycling_fee || article.additions?.quantity_recycling_fee ?
-                      <h5>
-                        {lang == "no" ? "Pant: " : "Recycling: "}
-                        {parseFloat((article.additions.art_recycling_fee || (article.additions.quantity_recycling_fee! * article.quantity!)).toString())
-                          .toLocaleString(receipt.merchant.merchant_country_code, {
-                            useGrouping: true,
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2,
-                          })}
-
-                      </h5> : null
-                    }
-                    {article.reference_of_origin?.reason_for_return && <h5>{lang == "no" ? "Årsak for retur: " : "Reason for return: "}{article.reference_of_origin?.reason_for_return}</h5>}
-                    {article.art_number && <h5>{lang == "no" ? "Artikkelnr: " : "Article number: "}{article.art_number}</h5>}
-                    {article.art_description && <h5>{lang == "no" ? "Beskrivelse: " : "Description: "}{article.art_description}</h5>}
-                  </div>
-
-                  <div>
-                    <p className='amount'> {article.return === true && "-"}
-                      {
-                        parseFloat((article.art_final_price || 0).toString())
-                          .toLocaleString(
-                            receipt.merchant.merchant_country_code, {
-                            useGrouping: true,
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2,
-                          })}
-                    </p>
-                    {article.additions?.vat_groups ?
-                      article.additions.vat_groups.map((group, index) => {
-                        return (
-                          <div key={"vat" + index}>
-                            <p className="small amount" style={{ textAlign: "right" }} >{group.percentage}% {group.name}</p>
-                            <p className="small amount" style={{ textAlign: "right" }} >({parseFloat((group.amount || 0).toString())
-                              .toLocaleString(
-                                receipt.merchant.merchant_country_code, {
-                                useGrouping: true,
-                                minimumFractionDigits: 2,
-                                maximumFractionDigits: 2,
-                              })})</p>
-                          </div>
-                        )
-                      }) : null}
-                  </div>
-
-                </div>
-              </div>)
+              return <Article key={"article-" + index} index={index} article={article} lang={lang} receipt={receipt} pdf={pdf} openPopup={openPopup} />
             })}
+
+
 
             {/* Total */}
             <div className="box head">
@@ -219,6 +155,11 @@ const Home = (props: any) => {
                   })}
                 </p>
               </div>
+              {/* Show discounts */}
+
+              <div className='tag button' onClick={() => openPopup("discounts")}>
+                {lang == "no" ? "Vis rabatter" : "Show discounts"}</div>
+
 
             </div>
 
@@ -330,9 +271,9 @@ const Home = (props: any) => {
             </div>
 
             {/* Return / bar code */}
-            {receipt.extra_receipt_view?.return_policy?.policy_description ||
+            {((receipt.extra_receipt_view?.return_policy?.policy_description ||
               receipt.extra_receipt_view?.return_policy?.policy_end_date ||
-              receipt.extra_receipt_view?.bar_code?.value ?
+              receipt.extra_receipt_view?.bar_code?.value)) ?
               <div className="box">
 
                 {receipt.extra_receipt_view?.return_policy?.policy_description &&
@@ -360,6 +301,9 @@ const Home = (props: any) => {
                       })}</p>
                   </div>
                 }
+                <h5 style={{ marginBottom: 5 }}>
+                  {lang == "no" ? "Returner artikkel: " : "Return article: "}
+                </h5>
                 {receipt.extra_receipt_view?.bar_code?.value && receipt.extra_receipt_view.bar_code.encoding != "qr" ?
                   <div>
                     <img style={{ width: "100%" }} src={bar_code} alt="Barcode" />
@@ -378,214 +322,336 @@ const Home = (props: any) => {
               </div>
               : null}
 
-            {/* Discounts */}
-            {receipt.extended_receipt_logic?.discounts && receipt.extended_receipt_logic?.discounts.map((discount, index) => {
-              return (
-                <div key={"discounts" + index}>
-                  <div className="box head">
-                    <h5><span>{lang == "no" ? "Rabatt" : "Discount"}</span></h5>
-                  </div>
-                  <div className="box">
+            {(pdf || popupOpen.type !== "") &&
+              <div className={!pdf ? "popup" : ""}>
+                <div className={!pdf ? "popup-wrapper" : ""} >
+                  {!pdf && <div className="hide"><span onClick={() => showPopup({ type: "", index: -1 })} className='button'>✕</span></div>}
+                  <div className={!pdf ? "popup-body" : ""}>
 
-                    <div style={{ marginBottom: 10 }}>
-                      <h5>{lang == "no" ? "Rabatt på artikkel: " : "Discount on article: "}</h5>
 
-                      {discount.art_numbers?.map((discount_art_nr, index) => {
-                        return <p key={"discount_art_nr" + index}>{discount_art_nr}</p>
-                      })}
-
-                    </div>
-
-                    <div style={{ marginBottom: 10 }}>
-                      <h5>{lang == "no" ? "Rabattsum" : "Discount amount: "}</h5>
-                      <p style={{ fontSize: '12px' }}>{discount.amount}</p>
-                    </div>
-
-                    <div style={{ marginBottom: 10 }}>
-                      <h5>{lang == "no" ? "Rabattprosent " : "Discount percentage: "}</h5>
-                      <p style={{ fontSize: '12px' }}>{discount.percentage}</p>
-                    </div>
-
-                    {discount.expiration_date &&
-                      <div style={{ marginBottom: 10 }}>
-                        <h5>{lang == "no" ? "Utløpsdato" : "Expiration date: "}</h5>
-                        <p style={{ fontSize: '12px' }}>
-
-                          {new Date(
-                            discount.expiration_date
-                          ).toLocaleDateString("no-NO", {
-                            year: "numeric",
-                            month: "short",
-                            day: "numeric",
-                            hour: "numeric",
-                            minute: "numeric",
-                          })}
-                        </p>
-                      </div>
-                    }
-
-                    {/* Bar / QR code */}
-                    <div>
-                      {discount.bar_code?.value && discount.bar_code.encoding != "qr" ?
-                        <div>
-                          <img key={"discount-" + index} style={{ width: "100%" }} src={discounts[index].url} alt="Barcode" />
-                          <p className="amount" style={{ textAlign: 'center' }}>{discount.bar_code.display_value && discount.bar_code.display_value}</p>
-                        </div>
-                        : discount.bar_code?.value && discount.bar_code.encoding == "qr" ?
-                          <div>
-                            <QRCode style={{
-                              height: 100,
-                              width: 100
-                            }} value={discount.bar_code.value} />
-                            <p className="amount" style={{ textAlign: 'center' }}>{discount.bar_code.display_value && discount.bar_code.display_value}</p>
+                    {/* Discounts */}
+                    {((pdf || popupOpen.type == "discounts") && receipt.extended_receipt_logic?.discounts) && receipt.extended_receipt_logic?.discounts.map((discount, index) => {
+                      return (
+                        <div key={"discounts" + index}>
+                          <div className="box head">
+                            <h5><span>{lang == "no" ? "Rabatt" : "Discount"}</span></h5>
                           </div>
-                          : null
-                      }
-                    </div>
+                          <div className="box">
 
-                  </div>
-                </div>
-              )
-            })}
+                            <div style={{ marginBottom: 10 }}>
+                              <h5>{lang == "no" ? "Rabatt på artikkel: " : "Discount on article: "}</h5>
 
-            {/* Tickets */}
-            {receipt.articles?.map((article, index) => {
-              if (article.bar_codes?.length && article.bar_codes?.length > 0) return (
-                <div key={"article-ticket" + index}>
-                  <div className="box head">
-                    <h5><span>{article.type === 'ticket' ? "Ticket" : article.type === 'credit' ? "Credit" : article.type}</span></h5>
-                  </div>
-                  <div className='box'>
+                              {discount.art_numbers?.map((discount_art_nr, index) => {
+                                return <p key={"discount_art_nr" + index}>{discount_art_nr}</p>
+                              })}
 
+                            </div>
 
-                    {article.art_name && <p style={{ marginBottom: 10 }}>{article.art_name}</p>}
+                            <div style={{ marginBottom: 10 }}>
+                              <h5>{lang == "no" ? "Rabattsum" : "Discount amount: "}</h5>
+                              <p style={{ fontSize: '12px' }}>{discount.amount}</p>
+                            </div>
 
-                    {/* Specified info */}
-                    {article.specified &&
-                      <>
-                        {article.specified.floor_number &&
-                          <div style={{ marginBottom: 10 }}>
-                            <h5>
-                              {lang == "no" ? "Etasjenummer" : "Floor number"}
-                            </h5>
-                            <p>{article.specified.floor_number}</p>
-                          </div>
-                        }
-                        {article.specified.room_number &&
-                          <div style={{ marginBottom: 10 }}>
-                            <h5>
-                              {lang == "no" ? "Romnummer" : "Room number"}
-                            </h5>
-                            <p>{article.specified.room_number}</p>
-                          </div>
-                        }
-                        {article.specified.entrance &&
-                          <div style={{ marginBottom: 10 }}>
-                            <h5>
-                              {lang == "no" ? "Inngang" : "Entrance"}
-                            </h5>
-                            <p>{article.specified.entrance}</p>
-                          </div>
-                        }
-                        {article.specified.row_number &&
-                          <div style={{ marginBottom: 10 }}>
-                            <h5>
-                              {lang == "no" ? "Radnummer" : "Row number"}
-                            </h5>
-                            <p>{article.specified.row_number}</p>
-                          </div>
-                        }
-                        {article.specified.seat_number &&
-                          <div style={{ marginBottom: 10 }}>
-                            <h5>
-                              {lang == "no" ? "Setenummer" : "Seat number"}
-                            </h5>
-                            <p>{article.specified.seat_number}</p>
-                          </div>
-                        }
-                        {article.specified.event_start &&
-                          <div style={{ marginBottom: 10 }}>
-                            <h5>
-                              {lang == "no" ? "Arrangement starter" : "Event start"}
-                            </h5>
-                            <p>{
-                              new Date(
-                                article.specified.event_start.substring(0, 19)
-                              ).toLocaleDateString(receipt.merchant.merchant_country_code, { year: "numeric", month: "numeric", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" })
+                            <div style={{ marginBottom: 10 }}>
+                              <h5>{lang == "no" ? "Rabattprosent " : "Discount percentage: "}</h5>
+                              <p style={{ fontSize: '12px' }}>{discount.percentage}</p>
+                            </div>
+
+                            {discount.expiration_date &&
+                              <div style={{ marginBottom: 10 }}>
+                                <h5>{lang == "no" ? "Utløpsdato" : "Expiration date: "}</h5>
+                                <p style={{ fontSize: '12px' }}>
+
+                                  {new Date(
+                                    discount.expiration_date
+                                  ).toLocaleDateString("no-NO", {
+                                    year: "numeric",
+                                    month: "short",
+                                    day: "numeric",
+                                    hour: "numeric",
+                                    minute: "numeric",
+                                  })}
+                                </p>
+                              </div>
                             }
-                            </p>
-                          </div>
-                        }
-                        {article.specified.event_ending &&
-                          <div style={{ marginBottom: 10 }}>
-                            <h5>
-                              {lang == "no" ? "Arrangement avslutter" : "Event end"}
-                            </h5>
-                            <p>
-                              {
-                                new Date(
-                                  article.specified.event_ending.substring(0, 19)
-                                ).toLocaleDateString(receipt.merchant.merchant_country_code, { year: "numeric", month: "numeric", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" })
+
+                            {/* Bar / QR code */}
+                            <div>
+                              {discount.bar_code?.value && discount.bar_code.encoding != "qr" ?
+                                <div>
+                                  <img key={"discount-" + index} style={{ width: "100%" }} src={discounts[index].url} alt="Barcode" />
+                                  <p className="amount" style={{ textAlign: 'center' }}>{discount.bar_code.display_value && discount.bar_code.display_value}</p>
+                                </div>
+                                : discount.bar_code?.value && discount.bar_code.encoding == "qr" ?
+                                  <div>
+                                    <QRCode style={{
+                                      height: 100,
+                                      width: 100
+                                    }} value={discount.bar_code.value} />
+                                    <p className="amount" style={{ textAlign: 'center' }}>{discount.bar_code.display_value && discount.bar_code.display_value}</p>
+                                  </div>
+                                  : null
                               }
-                            </p>
-                          </div>
-                        }
-                        {article.specified.expiration_date &&
-                          <div style={{ marginBottom: 10 }}>
-                            <h5>
-                              {lang == "no" ? "Utløpsdato" : "Expiration date"}
-                            </h5>
+                            </div>
 
-                            <p>{
-                              new Date(
-                                article.specified.expiration_date.substring(0, 19)
-                              ).toLocaleDateString(receipt.merchant.merchant_country_code, { year: "numeric", month: "numeric", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" })
-
-                            }</p>
                           </div>
-                        }
-                      </>
-                    }
-                    {/* Bar / QR code */}
-                    <div style={{ display: "flex", justifyContent: "center" }}>
-                      {article.bar_codes[0].encoding != "qr" ?
-                        <div>
-                          <img key={"discount-" + index} style={{ width: "100%" }} src={tickets[index].url} alt="Barcode" />
-                          <p className="amount" style={{ textAlign: 'center' }}>{article.bar_codes[0].display_value && article.bar_codes[0].display_value}</p>
                         </div>
+                      )
+                    })}
 
-                        : article.bar_codes[0].encoding == "qr" ?
-                          <div>
-                            <QRCode style={{
-                              height: 100,
-                              width: 100
-                            }} value={article.bar_codes[0].value} />
-                            <p className="amount" style={{ textAlign: 'center' }}>{article.bar_codes[0].display_value && article.bar_codes[0].display_value}</p>
+                    {/* Tickets */}
+                    {receipt.articles?.map((article, index) => {
+                      if ((pdf || (popupOpen.type === article.type && index === popupOpen.index)) && (article.bar_codes?.length && article.bar_codes?.length > 0)) return (
+                        <div key={"article-ticket" + index} id={"index-" + index}>
+                          <div className="box head">
+                            <h5><span>{article.type === 'ticket' ? "Ticket" : article.type === 'credit' ? "Credit" : article.type}</span></h5>
                           </div>
-                          :
-                          null
-                      }
-                    </div>
+                          <div className='box'>
+
+
+
+                            {article.art_name && <p style={{ marginBottom: 10 }}>{article.art_name}</p>}
+
+                            {/* Specified info */}
+                            {article.specified &&
+                              <>
+                                {article.specified.floor_number &&
+                                  <div style={{ marginBottom: 10 }}>
+                                    <h5>
+                                      {lang == "no" ? "Etasjenummer" : "Floor number"}
+                                    </h5>
+                                    <p>{article.specified.floor_number}</p>
+                                  </div>
+                                }
+                                {article.specified.room_number &&
+                                  <div style={{ marginBottom: 10 }}>
+                                    <h5>
+                                      {lang == "no" ? "Romnummer" : "Room number"}
+                                    </h5>
+                                    <p>{article.specified.room_number}</p>
+                                  </div>
+                                }
+                                {article.specified.entrance &&
+                                  <div style={{ marginBottom: 10 }}>
+                                    <h5>
+                                      {lang == "no" ? "Inngang" : "Entrance"}
+                                    </h5>
+                                    <p>{article.specified.entrance}</p>
+                                  </div>
+                                }
+                                {article.specified.row_number &&
+                                  <div style={{ marginBottom: 10 }}>
+                                    <h5>
+                                      {lang == "no" ? "Radnummer" : "Row number"}
+                                    </h5>
+                                    <p>{article.specified.row_number}</p>
+                                  </div>
+                                }
+                                {article.specified.seat_number &&
+                                  <div style={{ marginBottom: 10 }}>
+                                    <h5>
+                                      {lang == "no" ? "Setenummer" : "Seat number"}
+                                    </h5>
+                                    <p>{article.specified.seat_number}</p>
+                                  </div>
+                                }
+                                {article.specified.event_start &&
+                                  <div style={{ marginBottom: 10 }}>
+                                    <h5>
+                                      {lang == "no" ? "Arrangement starter" : "Event start"}
+                                    </h5>
+                                    <p>{
+                                      new Date(
+                                        article.specified.event_start.substring(0, 19)
+                                      ).toLocaleDateString(receipt.merchant.merchant_country_code, { year: "numeric", month: "numeric", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" })
+                                    }
+                                    </p>
+                                  </div>
+                                }
+                                {article.specified.event_ending &&
+                                  <div style={{ marginBottom: 10 }}>
+                                    <h5>
+                                      {lang == "no" ? "Arrangement avslutter" : "Event end"}
+                                    </h5>
+                                    <p>
+                                      {
+                                        new Date(
+                                          article.specified.event_ending.substring(0, 19)
+                                        ).toLocaleDateString(receipt.merchant.merchant_country_code, { year: "numeric", month: "numeric", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" })
+                                      }
+                                    </p>
+                                  </div>
+                                }
+                                {article.specified.expiration_date &&
+                                  <div style={{ marginBottom: 10 }}>
+                                    <h5>
+                                      {lang == "no" ? "Utløpsdato" : "Expiration date"}
+                                    </h5>
+
+                                    <p>{
+                                      new Date(
+                                        article.specified.expiration_date.substring(0, 19)
+                                      ).toLocaleDateString(receipt.merchant.merchant_country_code, { year: "numeric", month: "numeric", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" })
+
+                                    }</p>
+                                  </div>
+                                }
+                              </>
+                            }
+                            {/* Bar / QR code */}
+                            <div style={{ display: "flex", justifyContent: "center" }}>
+                              {article.bar_codes[0].encoding != "qr" ?
+                                <div>
+                                  <img key={"discount-" + index} style={{ width: "100%" }} src={tickets[index].url} alt="Barcode" />
+                                  <p className="amount" style={{ textAlign: 'center' }}>{article.bar_codes[0].display_value && article.bar_codes[0].display_value}</p>
+                                </div>
+
+                                : article.bar_codes[0].encoding == "qr" ?
+                                  <div>
+                                    <QRCode style={{
+                                      height: 100,
+                                      width: 100
+                                    }} value={article.bar_codes[0].value} />
+                                    <p className="amount" style={{ textAlign: 'center' }}>{article.bar_codes[0].display_value && article.bar_codes[0].display_value}</p>
+                                  </div>
+                                  :
+                                  null
+                              }
+                            </div>
+                          </div>
+                        </div>
+                      )
+                    })}
                   </div>
                 </div>
-              )
-            })}
+                {!pdf && <div className="popup-bg" onClick={() => showPopup({ type: "", index: -1 })}></div>}
+              </div>
+            }
 
           </div>
         </div>
-      </div >
-    </div>
+      </div>
+
+
+    </div >
+
   )
 }
 export default Home;
+
+const Article = ({ index, article, lang, receipt, pdf, openPopup }: { index: number, article: any, lang: any, receipt: Receipt, pdf: boolean, openPopup: (article: any, index: any) => void }) => {
+
+  const [expanded, setExpanded] = useState(pdf)
+  let hasExpand = !pdf && (article.art_description || article.art_number || article.reference_of_origin?.reason_for_return)
+
+  return (<div className="article">
+    <div className="split">
+
+      <div>
+        {/* Title */}
+        <p className='article-divider' onClick={() => hasExpand && setExpanded(!expanded)}>
+          {hasExpand && <span className='expand' style={{ cursor: "pointer" }}>{expanded ? '-' : '+'}</span>}
+          {article.art_name}
+        </p>
+        {/* Tag */}
+        {article.return &&
+          <div className='tag'>
+            {lang == "no" ? "Returnert" : "Returned"}
+          </div>
+        }
+        {/* Ticket */}
+        {(article.bar_codes?.length && article.bar_codes?.length > 0 && !pdf) &&
+          <div className='tag button' onClick={() => openPopup(article.type, index)}>
+            {lang == "no" ? "Vis " + (article.type === "ticket" ? "billett" : article.type ? "kreditt" : article.type) : "Show " + article.type}
+
+          </div>
+        }
+        {/* Quantity */}
+        {article.quantity &&
+          <h5>
+            {article.quantity} {article.quantity_type}
+          </h5>
+        }
+        {/* Discounts */}
+        {article.subtractions?.discounts && article.subtractions.discounts.length > 0 &&
+          article.subtractions.discounts.map((discount: any, i: any) => (
+            <h5 key={"discount" + i}>
+
+              {discount.description ? (discount.description + ": ") : null}
+              -{discount.per_quantity ? parseFloat(((discount?.amount || 0) * (article.quantity || 0)).toString()).toLocaleString(receipt.merchant.merchant_country_code, {
+                useGrouping: true,
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              }) : parseFloat((discount?.amount || 0).toString()).toLocaleString(receipt.merchant.merchant_country_code, {
+                useGrouping: true,
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}
+            </h5>
+
+          ))
+        }
+        {/* Recycling */}
+        {article.additions?.art_recycling_fee || article.additions?.quantity_recycling_fee ?
+          <h5>
+            {lang == "no" ? "Pant: " : "Recycling: "}
+            {parseFloat((article.additions.art_recycling_fee || (article.additions.quantity_recycling_fee! * article.quantity!)).toString())
+              .toLocaleString(receipt.merchant.merchant_country_code, {
+                useGrouping: true,
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}
+
+          </h5> : null
+        }
+        {/* Extra info */}
+        {(expanded && article.reference_of_origin?.reason_for_return) && <h5>{lang == "no" ? "Årsak for retur: " : "Reason for return: "}{article.reference_of_origin?.reason_for_return}</h5>}
+        {(expanded && article.art_number) && <h5>{lang == "no" ? "Artikkelnr: " : "Article number: "}{article.art_number}</h5>}
+        {(expanded && article.art_description) && <h5>{lang == "no" ? "Beskrivelse: " : "Description: "}{article.art_description}</h5>}
+      </div>
+
+      {/* Sum */}
+      <div>
+        <p className='amount article-divider'> {article.return === true && "-"}
+          {
+            parseFloat((article.art_final_price || 0).toString())
+              .toLocaleString(
+                receipt.merchant.merchant_country_code, {
+                useGrouping: true,
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}
+        </p>
+        {article.additions?.vat_groups ?
+          article.additions.vat_groups.map((group: any, index: any) => {
+            return (
+              <div key={"vat" + index}>
+                <p className="small amount" style={{ textAlign: "right" }} >{group.percentage}% {group.name}</p>
+                <p className="small amount" style={{ textAlign: "right" }} >({parseFloat((group.amount || 0).toString())
+                  .toLocaleString(
+                    receipt.merchant.merchant_country_code, {
+                    useGrouping: true,
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })})</p>
+              </div>
+            )
+          }) : null}
+      </div>
+
+    </div>
+  </div>)
+}
 
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { query } = context;
   let lang: any = "",
-    template: any = "";
+    template: any = "",
+    pdf: boolean = false;
   if (query.lang) lang = query?.lang
   if (query.template) template = query?.template
+  if (query.pdf) pdf = query?.pdf === "true"
   let fetchAuth = await fetch("https://staging.api.zeipt.io/auth/public", {
     method: "POST",
     headers: {
@@ -697,7 +763,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       bar_code,
       tickets,
       lang,
-      template
+      template,
+      pdf
     },
   };
 }

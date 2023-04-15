@@ -74,10 +74,82 @@ h5 {
 }
 .small {
   font-size: 10px;
-
   font-weight: 300;
 }
+/* Buttons */
+.tag {
+  font-weight: 400;
+  font-size: 10px;
+  border: 1px dashed #ececec;
+  border-radius: 5px;
+  display: inline-block;
+  color: #949494;
+  padding: 2px 5px;
+  margin-bottom: 5px !important;
+  margin-right: 5px;
+}
+.expand {
+  width: 18px;
+  background-color: #f8f8f8;
+  border-radius: 100%;
+  display: inline-block;
+  text-align: center;
+  margin-right: 5px;
+  outline: 1px solid #ccc;
+}
+.button {
+  cursor: pointer;
+  background-color: #f8f8f8;
+  border-radius: 5px;
+  color: black;
+  border: 1px solid #ccc;
+}
 
+/* Popup */
+.popup {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 99;
+}
+.popup-bg {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.3);
+  top: 0;
+}
+
+.popup-wrapper {
+  background: white;
+  position: fixed;
+  z-index: 1;
+  margin: auto;
+  display: block;
+  width: calc(100% - 40px);
+  max-width: 380px;
+  top: 20px;
+  left: 0;
+  right: 0;
+  border-radius: 6px;
+  max-height: 100%;
+  overflow: scroll;
+}
+.hide {
+  position: absolute;
+  right: 10px;
+  top: 5px;
+  text-align: right;
+}
+.hide span {
+  width: 26px;
+  display: inline-block;
+  text-align: center;
+  border-radius: 100%;
+}
+/* Other */
 .wrapper {
   position: relative;
   z-index: 20;
@@ -147,20 +219,17 @@ h5 {
   border-bottom: 1px solid #ececec;
   position: relative;
 }
-.tag {
-  font-weight: 400;
-  font-size: 10px;
-  border: 1px solid #ececec;
-  border-radius: 5px;
-  display: inline-block;
-  color: #949494;
-  padding: 2px 5px;
+.article-divider {
+  border-bottom: 1px solid #ececec;
+  padding-bottom: 5px;
+  margin-bottom: 5px;
 }
 
 /* Templates */
 
 .template {
   padding: 10px;
+  position: relative;
 }
 
 /* Template 1 */
