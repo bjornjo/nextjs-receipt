@@ -1,17 +1,17 @@
 import { GetServerSideProps } from 'next';
 import bwipjs from 'bwip-js';
 import { Receipt } from '@/utils/types/receipt';
-import logo from "../../public/zeipt.svg";
+import logo from "../../public/zeipt.png";
 import regnskogfondet from "../../public/regnskogfondet.png";
 import QRCode from "react-qr-code";
 import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
 
-
-
 const Home = (props: any) => {
 
   const [popupOpen, showPopup] = useState({ type: "", index: -1 })
+  const [isLoading, setIsLoading] = useState(false);
+
 
   let receipt = props.receipt[0] as Receipt,
     discounts = props.discounts as any,
@@ -25,14 +25,34 @@ const Home = (props: any) => {
   const openPopup = (type: any, index?: number) => {
     showPopup({ type: type, index: index !== undefined ? index : -1 })
   };
+  const handleClick = async () => {
+    setIsLoading(true);
 
+    try {
+      const url = `${window.location.href}`.replace("pdf=false", "pdf=true");
+      const response = await fetch(`/api/pdf?url=${encodeURIComponent(url)}`);
+      const pdfBlob = await response.blob();
+      const pdfUrl = URL.createObjectURL(pdfBlob);
+      const link = document.createElement('a');
+      link.href = pdfUrl;
+      const date =
+        new Date(
+          receipt.timestamp.substring(0, 19)
+        ).toLocaleDateString(receipt.merchant.merchant_country_code, { year: "numeric", month: "numeric", day: "numeric" })
 
+      link.download = `${date}-${receipt.merchant.purchase_location?.store_name}-${receipt.receipt_number}.pdf`;
+      link.click();
+    } catch (error) {
+      console.error(error);
+      alert('An error occurred while generating the PDF');
+    }
+
+    setIsLoading(false);
+  };
 
   return (
 
     <div className={"template template-" + template} >
-
-
 
       <div className="wrapper" >
         <div className="receipt-wrapper">
@@ -40,8 +60,20 @@ const Home = (props: any) => {
 
 
             {/* Merchant logo */}
-            <div className="receipt-header">
-              <div className='merchant-logo' style={{ "backgroundImage": "url(" + logo.src + ")" }} />
+            <div className="receipt-header split" style={{ alignItems: "center" }}>
+              <img className='merchant-logo' src={logo.src} alt="Merchant logo" />
+              {!pdf &&
+                <button className='tag button' disabled={isLoading} onClick={handleClick} style={{
+                  padding: 5,
+                  margin: '0px !important'
+                }}>
+                  {lang == "no" ?
+                    isLoading ? 'Laster ned...' : 'Last ned PDF'
+                    :
+                    isLoading ? 'Downloading...' : 'Download PDF'
+                  }
+                </button>
+              }
             </div>
 
             {/* Merchant name */}
@@ -156,9 +188,10 @@ const Home = (props: any) => {
                 </p>
               </div>
               {/* Show discounts */}
-
-              <div className='tag button' onClick={() => openPopup("discounts")}>
-                {lang == "no" ? "Vis rabatter" : "Show discounts"}</div>
+              {!pdf &&
+                <div className='tag button' onClick={() => openPopup("discounts")}>
+                  {lang == "no" ? "Vis rabatter" : "Show discounts"}</div>
+              }
 
 
             </div>
@@ -265,8 +298,9 @@ const Home = (props: any) => {
 
             {/* Regnskogfondet */}
             <div className="box" style={{ background: 'none' }}>
-              <div className="merchant-logo" style={{ "backgroundImage": "url(" + regnskogfondet.src + ")" }}>
-              </div>
+
+              <img className='merchant-logo' src={regnskogfondet.src} alt="Regnskogsfondet logo" />
+
               <h5>{lang == "no" ? "Ingen trær ble skadet med denne kvitteringen" : "No trees were harmed with this receipt"}</h5>
             </div>
 
@@ -642,7 +676,6 @@ const Article = ({ index, article, lang, receipt, pdf, openPopup }: { index: num
     </div>
   </div>)
 }
-
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { query } = context;

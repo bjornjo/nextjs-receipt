@@ -104,7 +104,10 @@ h5 {
   color: black;
   border: 1px solid #ccc;
 }
-
+.button:disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
 /* Popup */
 .popup {
   position: absolute;
@@ -177,10 +180,8 @@ h5 {
 .merchant-logo {
   height: 40px;
   width: auto;
-  margin: auto;
-  background-size: contain;
-  background-position: left;
-  background-repeat: no-repeat;
+  margin: 0;
+  display: block;
 }
 
 .box {
