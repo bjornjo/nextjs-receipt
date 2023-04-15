@@ -1,11 +1,12 @@
 import puppeteer from 'puppeteer';
 import fs from 'fs';
+import { NextApiRequest, NextApiResponse } from 'next';
 
-export default async function handler(req, res) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     const { url } = req.query;
-    const { searchParams, pathname } = new URL(url);
-    const queryParams = {};
+    const { searchParams, pathname } = new URL(url as string);
+    const queryParams: { [key: string]: string } = {};
     searchParams.forEach((value, key) => {
       queryParams[key] = value;
     });
@@ -13,7 +14,7 @@ export default async function handler(req, res) {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
 
-    await page.goto(url, {
+    await page.goto(url as string, {
       waitUntil: 'networkidle2',
     });
 
