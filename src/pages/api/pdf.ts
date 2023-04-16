@@ -1,9 +1,9 @@
 import puppeteer from 'puppeteer';
 import fs from 'fs';
-import { NextApiRequest, NextApiResponse } from 'next';
+
 import chromium from 'chrome-aws-lambda';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(req: any, res: any) {
   try {
     const { url } = req.query;
     const { searchParams, pathname } = new URL(url as string);
