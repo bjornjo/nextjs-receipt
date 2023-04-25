@@ -11,17 +11,75 @@ const Home = (props: any) => {
 
   const [popupOpen, showPopup] = useState({ type: "", index: -1 })
   const [isLoading, setIsLoading] = useState(false);
+  const receiptExample: Receipt = {
+    "total": {
+      "additions": {
+        "total_vat": 0,
+      },
+      "final_price": 0,
+      "total_currency": "",
+      "total_moneyback": false,
+      "extra_sum_values": {
+        "final_price_rounded": 0
+      },
+
+      "payment_method_array": [
+        {
+          "amount": 0,
+          "method": "",
+          "currency": ""
+        }
+      ]
+    },
+    "version": "",
+    "merchant": {
+      "org_number": "",
+      "merchant_number": "",
+      "merchant_country_code": "EN",
+      "purchase_location": {
+        "purchase_country_code": "",
+        "city": "",
+        "zip_code": "",
+        "address": "",
+        "store_name": "",
+      }
+    },
+    "payments": [
+      {
+        "currency": "",
+        "moneyback": false,
+        "timestamp": "",
+        "payment_method": ""
+      }
+    ],
+    "timestamp": "",
+    "receipt_type": "",
+    "receipt_number": "",
+    "receipt_producer_certificate": ""
+  }
+  const [receipt, setReceipt] = useState(props.preview ? receiptExample as Receipt : props.receipt[0] as Receipt)
+  console.log(props.preview, "props.preview");
 
 
-  let receipt = props.receipt[0] as Receipt,
-    discounts = props.discounts as any,
+  let discounts = props.discounts as any,
     bar_code = props.bar_code as any,
     tickets = props.tickets as any,
     lang = props.lang as any,
     template = props.template as any,
-    pdf = props.pdf as boolean
+    pdf = props.pdf as boolean,
+    preview = props.preview as boolean
 
   console.log(receipt);
+  useEffect(() => {
+    const handler = (event: MessageEvent) => {
+      setReceipt(event.data);
+      console.log(event.data);
+    };
+
+    window.addEventListener('message', handler);
+    return () => window.removeEventListener('message', handler);
+  }, []);
+
   const openPopup = (type: any, index?: number) => {
     showPopup({ type: type, index: index !== undefined ? index : -1 })
   };
@@ -62,7 +120,7 @@ const Home = (props: any) => {
             {/* Merchant logo */}
             <div className="receipt-header split" style={{ alignItems: "center" }}>
               <img className='merchant-logo' src={logo.src} alt="Merchant logo" />
-              {!pdf &&
+              {(!pdf && !preview) &&
                 <button className='tag button' disabled={isLoading} onClick={handleClick} style={{
                   padding: 5,
                   margin: '0px !important'
@@ -160,12 +218,14 @@ const Home = (props: any) => {
             </div>
 
             {/* Article header */}
-            <div className="box head">
-              <div className="split">
-                <h5><span>{lang == "no" ? "Artikkel" : "Article"}</span></h5>
-                <h5><span>{lang == "no" ? "Beløp" : "Sum"}</span></h5>
+            {receipt.articles &&
+              <div className="box head">
+                <div className="split">
+                  <h5><span>{lang == "no" ? "Artikkel" : "Article"}</span></h5>
+                  <h5><span>{lang == "no" ? "Beløp" : "Sum"}</span></h5>
+                </div>
               </div>
-            </div>
+            }
 
             {/* Articles */}
             {receipt.articles && receipt.articles.map((article, index) => {
@@ -188,7 +248,7 @@ const Home = (props: any) => {
                 </p>
               </div>
               {/* Show discounts */}
-              {!pdf &&
+              {(!pdf && receipt.extended_receipt_logic?.discounts) &&
                 <div className='tag button' onClick={() => openPopup("discounts")}>
                   {lang == "no" ? "Vis rabatter" : "Show discounts"}</div>
               }
@@ -200,7 +260,7 @@ const Home = (props: any) => {
             <div className="box">
 
               <div className="split">
-                <p>{receipt.total.total_vat_name}</p>
+                <p>{receipt.total.total_vat_name ? receipt.total.total_vat_name : "VAT"}</p>
                 <p className="amount">
                   {parseFloat(receipt.total.additions.total_vat.toString()).toLocaleString(receipt.merchant.merchant_country_code, {
                     useGrouping: true,
@@ -681,9 +741,13 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const { query } = context;
   let lang: any = "",
     template: any = "",
+    preview: boolean = false,
     pdf: boolean = false;
+
+
   if (query.lang) lang = query?.lang
   if (query.template) template = query?.template
+  if (query.preview) preview = query?.preview === "true"
   if (query.pdf) pdf = query?.pdf === "true"
   let fetchAuth = await fetch("https://staging.api.zeipt.io/auth/public", {
     method: "POST",
@@ -697,7 +761,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   })
     .then((res) => res.json())
 
-  let receipt = await fetch("https://staging.api.zeipt.io/app/user/receipt/fetch/transnr", {
+  let receipt = query.preview ? [{}] : await fetch("https://staging.api.zeipt.io/app/user/receipt/fetch/transnr", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -718,11 +782,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
     .catch((err) => {
       console.log('Can\'t fetch receipt;', err);
-    })
+    });
 
   /* Receipt bar code */
-  let bar_code: any;
-  if (receipt[0].extra_receipt_view.bar_code.value && receipt[0].extra_receipt_view.bar_code.encoding != "qr") {
+  let bar_code: any = "";
+  if (receipt[0].extra_receipt_view?.bar_code.value && receipt[0].extra_receipt_view.bar_code.encoding != "qr") {
     let options = {
       bcid: receipt[0].extra_receipt_view.bar_code.encoding == "code_39" ? "code39"
         : receipt[0].extra_receipt_view.bar_code.encoding == "ean_13" ? "ean13"
@@ -791,6 +855,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   return {
     props: {
+      preview,
       receipt,
       discounts,
       bar_code,

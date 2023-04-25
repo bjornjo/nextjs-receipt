@@ -1,9 +1,8 @@
-import puppeteer from 'puppeteer-core';
+import puppeteer from 'puppeteer';
 import fs from 'fs';
+import { NextApiRequest, NextApiResponse } from 'next';
 
-import chromium from 'chrome-aws-lambda';
-
-export default async function handler(req: any, res: any) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     const { url } = req.query;
     const { searchParams, pathname } = new URL(url as string);
@@ -12,20 +11,14 @@ export default async function handler(req: any, res: any) {
       queryParams[key] = value;
     });
 
-    const browser = await chromium.puppeteer.launch({
-    args: [...chromium.args, "--hide-scrollbars", "--disable-web-security"],
-    defaultViewport: chromium.defaultViewport,
-    executablePath: await chromium.executablePath,
-    headless: true,
-    ignoreHTTPSErrors: true,
-  })
+    const browser = await puppeteer.launch();
     const page = await browser.newPage();
 
     await page.goto(url as string, {
       waitUntil: 'networkidle2',
     });
 
-    const pdf = await page.pdf({ format: 'a4' });
+    const pdf = await page.pdf({ format: 'A4' });
 
     fs.writeFileSync('page.pdf', pdf);
 

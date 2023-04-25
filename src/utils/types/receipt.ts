@@ -20,7 +20,7 @@ export interface Merchant {
 	merchant_number: string
 	org_number: string
 	merchant_country_code: string
-	purchase_location?: PurchaseLocation
+	purchase_location: PurchaseLocation
 	travel_reference?: TravelReference
 	telephone?: Telephone
 	email?: string
