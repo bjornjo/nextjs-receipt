@@ -1,4 +1,4 @@
-import puppeteer from 'puppeteer';
+import puppeteer from 'puppeteer-core';
 import fs from 'fs';
 import { NextApiRequest, NextApiResponse } from 'next';
 
@@ -11,14 +11,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       queryParams[key] = value;
     });
 
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({
+      executablePath: process.env.CHROME_BIN || '/usr/bin/chromium-browser',
+      args: ['--no-sandbox']
+    });
+
+
     const page = await browser.newPage();
 
     await page.goto(url as string, {
       waitUntil: 'networkidle2',
     });
 
-    const pdf = await page.pdf({ format: 'A4' });
+    const pdf = await page.pdf({ format: 'a4' });
 
     fs.writeFileSync('page.pdf', pdf);
 

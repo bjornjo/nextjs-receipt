@@ -58,7 +58,7 @@ const Home = (props: any) => {
     "receipt_producer_certificate": ""
   }
   const [receipt, setReceipt] = useState(props.preview ? receiptExample as Receipt : props.receipt[0] as Receipt)
-  console.log(props.preview, "props.preview");
+
 
 
   let discounts = props.discounts as any,
@@ -69,7 +69,7 @@ const Home = (props: any) => {
     pdf = props.pdf as boolean,
     preview = props.preview as boolean
 
-  console.log(receipt);
+
   useEffect(() => {
     const handler = (event: MessageEvent) => {
       setReceipt(event.data);
