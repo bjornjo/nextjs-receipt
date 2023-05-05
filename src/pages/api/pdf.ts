@@ -35,9 +35,9 @@ export default async function handler(
       waitUntil: "networkidle2",
     });
 
-    let height = await page.evaluate(
-      () => document.documentElement.offsetHeight
-    );
+    let height = await (
+      page.evaluate as (pageFunction: () => number) => Promise<number>
+    )(() => document.documentElement.offsetHeight);
 
     const pdf = await page.pdf({ height: height + 100 + "px" });
 
