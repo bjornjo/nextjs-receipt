@@ -42,11 +42,6 @@ a {
   margin: 0;
 }
 
-/* Text styles */
-
-@import url("https://fonts.googleapis.com/css?family=Poppins:300,400,700&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@200;800&display=swap");
-
 p {
   margin: 0;
   margin-bottom: 0px;
@@ -84,18 +79,31 @@ h5 {
   border-radius: 5px;
   display: inline-block;
   color: #949494;
-  padding: 2px 5px;
+  padding: 5px 10px;
+  text-transform: uppercase;
   margin-bottom: 5px !important;
   margin-right: 5px;
 }
 .expand {
-  width: 18px;
+  width: 13px;
   background-color: #f8f8f8;
   border-radius: 100%;
   display: inline-block;
-  text-align: center;
   margin-right: 5px;
   outline: 1px solid #ccc;
+  height: 13px;
+  line-height: 0;
+  top: 2px;
+  position: relative;
+}
+.expand img {
+  width: 6px;
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin: auto;
+  transform: translateY(-50%);
+  top: 50%;
 }
 .button {
   cursor: pointer;
@@ -108,6 +116,15 @@ h5 {
 .button:disabled {
   opacity: 0.5;
   pointer-events: none;
+}
+
+.sticky-bottom {
+  position: sticky;
+  bottom: 0;
+  background-color: #f0f0f0;
+  padding: 20px;
+  border-radius: 0;
+  border-top: 1px solid #ccc;
 }
 /* Popup */
 .popup {
@@ -124,6 +141,7 @@ h5 {
   width: 100%;
   background: rgba(0, 0, 0, 0.3);
   top: 0;
+  border-radius: 9px;
 }
 
 .popup-wrapper {
@@ -141,6 +159,15 @@ h5 {
   max-height: 100%;
   overflow: scroll;
 }
+
+.popup-wrapper::-webkit-scrollbar {
+  display: none;
+}
+
+.popup-wrapper {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
 .hide {
   position: absolute;
   right: 10px;
@@ -148,10 +175,14 @@ h5 {
   text-align: right;
 }
 .hide span {
-  width: 26px;
+  width: 22px;
   display: inline-block;
   text-align: center;
   border-radius: 100%;
+  height: 22px;
+}
+.hide span img {
+  width: 8px;
 }
 /* Other */
 .wrapper {
@@ -162,7 +193,6 @@ h5 {
   border: 1px solid #ececec;
   background: #f8f8f8;
   border-radius: 10px;
-  overflow: hidden;
 }
 
 .receipt-wrapper {
@@ -176,6 +206,7 @@ h5 {
   padding: 20px;
   background-color: white;
   border-bottom: 1px solid #ececec;
+  border-radius: 10px 10px 0px 0px;
 }
 
 .merchant-logo {

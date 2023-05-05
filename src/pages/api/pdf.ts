@@ -1,8 +1,16 @@
-import puppeteer from 'puppeteer-core';
-import fs from 'fs';
-import { NextApiRequest, NextApiResponse } from 'next';
+import fs from "fs";
+import { NextApiRequest, NextApiResponse } from "next";
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
+  let puppeteer;
+  if (process.env.NODE_ENV === "development") {
+    puppeteer = await import("puppeteer");
+  } else {
+    puppeteer = await import("puppeteer-core");
+  }
   try {
     const { url } = req.query;
     const { searchParams, pathname } = new URL(url as string);
@@ -11,30 +19,38 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       queryParams[key] = value;
     });
 
-    const browser = await puppeteer.launch({
-      executablePath: process.env.CHROME_BIN || '/usr/bin/chromium-browser',
-      args: ['--no-sandbox']
-    });
-
+    let browser;
+    if (process.env.NODE_ENV === "development") {
+      browser = await puppeteer.launch();
+    } else {
+      browser = await puppeteer.launch({
+        executablePath: process.env.CHROME_BIN || "/usr/bin/chromium-browser",
+        args: ["--no-sandbox"],
+      });
+    }
 
     const page = await browser.newPage();
 
     await page.goto(url as string, {
-      waitUntil: 'networkidle2',
+      waitUntil: "networkidle2",
     });
 
-    const pdf = await page.pdf({ format: 'a4' });
+    let height = await page.evaluate(
+      () => document.documentElement.offsetHeight
+    );
 
-    fs.writeFileSync('page.pdf', pdf);
+    const pdf = await page.pdf({ height: height + 100 + "px" });
+
+    fs.writeFileSync("page.pdf", pdf);
 
     await browser.close();
 
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', `attachment; filename=receipt.pdf`);
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Disposition", `attachment; filename=receipt.pdf`);
 
     res.send(pdf);
   } catch (error) {
     console.error(error);
-    res.status(500).send('An error occurred while generating the PDF');
+    res.status(500).send("An error occurred while generating the PDF");
   }
 }

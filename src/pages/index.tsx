@@ -3,6 +3,9 @@ import bwipjs from 'bwip-js';
 import { Receipt } from '@/utils/types/receipt';
 import logo from "../../public/zeipt.png";
 import regnskogfondet from "../../public/regnskogfondet.png";
+import plus from "../../public/plus.svg";
+import cross from "../../public/cross.svg";
+import minus from "../../public/minus.svg";
 import QRCode from "react-qr-code";
 import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
@@ -122,7 +125,6 @@ const Home = (props: any) => {
               <img className='merchant-logo' src={logo.src} alt="Merchant logo" />
               {(!pdf && !preview) &&
                 <button className='tag button' disabled={isLoading} onClick={handleClick} style={{
-                  padding: 5,
                   margin: '0px !important'
                 }}>
                   {lang == "no" ?
@@ -247,13 +249,6 @@ const Home = (props: any) => {
                   })}
                 </p>
               </div>
-              {/* Show discounts */}
-              {(!pdf && receipt.extended_receipt_logic?.discounts) &&
-                <div className='tag button' onClick={() => openPopup("discounts")}>
-                  {lang == "no" ? "Vis rabatter" : "Show discounts"}</div>
-              }
-
-
             </div>
 
             {/* MVA */}
@@ -309,42 +304,10 @@ const Home = (props: any) => {
             </div>
 
             {/* Payments */}
-            {receipt.payments.map((payment, index) => {
-              return (
 
-                <div className="box" key={"payment-" + index}>
-                  <div className='split'>
-                    <div>
-                      <p>{lang == "no" ? "Betaling" : "Payment"}</p>
-                    </div>
-                    <div>
-                      <p className="amount">
-                        {payment.moneyback === true && "-"}
-                        {parseFloat((payment.payment_amount || 0).toString()).toLocaleString(receipt.merchant.merchant_country_code, {
-                          useGrouping: true,
-                          minimumFractionDigits: 2,
-                          maximumFractionDigits: 2,
-                        })}</p>
-                    </div>
-                  </div>
-                  <div style={{ marginTop: '10px' }}>
-                    {!!payment.payment_method && <p className="amount small">{payment.payment_method}</p>}
-                    {!!payment.timestamp && <p className="amount small">{new Date(payment.timestamp).toLocaleDateString(receipt.merchant.merchant_country_code, { year: "numeric", month: "numeric", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" })}</p>}
-                    {!!(payment.national_merchant_number && payment.national_merchant_number) && <p className="amount small">Bax: {payment.national_merchant_number} -{" "}{payment.bank_terminal_id}</p>}
-                    {!!payment.payment_method_type && <p className="amount small">{payment.payment_method_type}</p>}
-                    {!!payment.payment_method_owner && <p className="amount small">{payment.payment_method_owner}</p>}
-                    {!!payment.masked_pan && <p className="amount small">{payment.masked_pan}</p>}
-                    {!!payment.aid_nr && <p className="amount small">AID: {payment.aid_nr}</p>}
-                    {!!payment.tvr_nr && <p className="amount small">TVR: {payment.tvr_nr}</p>}
-                    {!!payment.tsi_nr && <p className="amount small">TSI: {payment.tsi_nr}</p>}
-                    {!!payment.ref_nr && <p className="amount small">Ref.: {payment.ref_nr}</p>}
-                    {!!payment.response_code && <p className="amount small">{lang == "no" ? "Respons: " : "Response: "}{payment.response_code}</p>}
-                    {!!payment.currency && <p className="amount small">{payment.currency}</p>}
-                    {!!payment.payment_amount && <p className="amount small">{payment.payment_amount}</p>}
-                    {!!payment.tip_amount && <p className="amount small">+ {payment.tip_amount} tips</p>}
-                  </div>
-                </div>
-              )
+            {receipt.payments.map((payment, index) => {
+              return <Payment key={"payment-" + index} index={index} payment={payment} lang={lang} receipt={receipt} pdf={pdf} />
+
             })}
 
             {/* Goodbye message */}
@@ -364,76 +327,92 @@ const Home = (props: any) => {
               <h5>{lang == "no" ? "Ingen trær ble skadet med denne kvitteringen" : "No trees were harmed with this receipt"}</h5>
             </div>
 
-            {/* Return / bar code */}
-            {((receipt.extra_receipt_view?.return_policy?.policy_description ||
-              receipt.extra_receipt_view?.return_policy?.policy_end_date ||
-              receipt.extra_receipt_view?.bar_code?.value)) ?
-              <div className="box">
 
-                {receipt.extra_receipt_view?.return_policy?.policy_description &&
-                  <div style={{ marginBottom: 10 }}>
-                    <h5>{lang == "no" ? "Returpolicy" : "Return policy"}</h5>
-                    <p>{receipt.extra_receipt_view?.return_policy?.policy_description}</p>
-                  </div>
-                }
-                {/* Policy end date */}
-                {receipt.extra_receipt_view?.return_policy?.policy_end_date &&
-                  <div style={{ marginBottom: 10 }}>
-                    <h5>
-                      {lang == "no" ? "Siste dag for retur: " : "Last day of return: "}
-                    </h5>
-                    <p style={{ fontSize: '12px' }}>
+            {/* Show discounts */}
+            {(!pdf && receipt.extended_receipt_logic?.discounts) &&
+              <div className='sticky-bottom'>
 
-                      {new Date(
-                        receipt.extra_receipt_view?.return_policy?.policy_end_date
-                      ).toLocaleDateString("no-NO", {
-                        year: "numeric",
-                        month: "short",
-                        day: "numeric",
-                        hour: "numeric",
-                        minute: "numeric",
-                      })}</p>
-                  </div>
-                }
-                <h5 style={{ marginBottom: 5 }}>
-                  {lang == "no" ? "Returner artikkel: " : "Return article: "}
-                </h5>
-                {receipt.extra_receipt_view?.bar_code?.value && receipt.extra_receipt_view.bar_code.encoding != "qr" ?
-                  <div>
-                    <img style={{ width: "100%" }} src={bar_code} alt="Barcode" />
-                    <p className="amount" style={{ textAlign: 'center' }}>{receipt.extra_receipt_view?.bar_code.display_value && receipt.extra_receipt_view?.bar_code.display_value}</p>
-                  </div>
-                  : receipt.extra_receipt_view?.bar_code?.value && receipt.extra_receipt_view.bar_code.encoding == "qr" ?
-                    <div>
-                      <QRCode style={{
-                        height: 100,
-                        width: 100
-                      }} value={bar_code.value} />
-                      <p className="amount" style={{ textAlign: 'center' }}>{receipt.extra_receipt_view?.bar_code.display_value && receipt.extra_receipt_view?.bar_code.display_value}</p>
-                    </div>
-                    : null
-                }
+                <div className='tag button' style={{ margin: "0 !important", marginRight: "10px !important" }} onClick={() => openPopup("discounts")}>
+                  {lang == "no" ? "Vis kuponger" : "Show coupons"}
+                </div>
+
+                <div className='tag button' style={{ margin: "0 !important" }} onClick={() => openPopup("return")}>
+                  {lang == "no" ? "Returner" : "Return"}
+                </div>
               </div>
-              : null}
-
+            }
             {(pdf || popupOpen.type !== "") &&
               <div className={!pdf ? "popup" : ""}>
                 <div className={!pdf ? "popup-wrapper" : ""} >
-                  {!pdf && <div className="hide"><span onClick={() => showPopup({ type: "", index: -1 })} className='button'>✕</span></div>}
+                  {!pdf && <div className="hide"><span onClick={() => showPopup({ type: "", index: -1 })} className='expand'><img src={cross.src} alt="Collapse" /></span></div>}
                   <div className={!pdf ? "popup-body" : ""}>
 
+                    {/* Return / bar code */}
+                    {((pdf || popupOpen.type == "return") && (receipt.extra_receipt_view?.return_policy?.policy_description ||
+                      receipt.extra_receipt_view?.return_policy?.policy_end_date ||
+                      receipt.extra_receipt_view?.bar_code?.value)) &&
+                      <div>
+                        <div className="box head">
+                          <h5><span>{lang == "no" ? "Retur" : "Return"}</span></h5>
+                        </div>
+                        <div className="box">
+                          {receipt.extra_receipt_view?.return_policy?.policy_description &&
+                            <div style={{ marginBottom: 10 }}>
+                              <h5>{lang == "no" ? "Returpolicy" : "Return policy"}</h5>
+                              <p>{receipt.extra_receipt_view?.return_policy?.policy_description}</p>
+                            </div>
+                          }
+                          {/* Policy end date */}
+                          {receipt.extra_receipt_view?.return_policy?.policy_end_date &&
+                            <div style={{ marginBottom: 10 }}>
+                              <h5>
+                                {lang == "no" ? "Siste dag for retur: " : "Last day of return: "}
+                              </h5>
+                              <p style={{ fontSize: '12px' }}>
 
+                                {new Date(
+                                  receipt.extra_receipt_view?.return_policy?.policy_end_date
+                                ).toLocaleDateString("no-NO", {
+                                  year: "numeric",
+                                  month: "short",
+                                  day: "numeric",
+                                  hour: "numeric",
+                                  minute: "numeric",
+                                })}</p>
+                            </div>
+                          }
+                          <h5 style={{ marginBottom: 5 }}>
+                            {lang == "no" ? "Returner artikkel: " : "Return article: "}
+                          </h5>
+                          {receipt.extra_receipt_view?.bar_code?.value && receipt.extra_receipt_view.bar_code.encoding != "qr" ?
+                            <div>
+                              <img style={{ width: "100%" }} src={bar_code} alt="Barcode" />
+                              <p className="amount" style={{ textAlign: 'center' }}>{receipt.extra_receipt_view?.bar_code.display_value && receipt.extra_receipt_view?.bar_code.display_value}</p>
+                            </div>
+                            : receipt.extra_receipt_view?.bar_code?.value && receipt.extra_receipt_view.bar_code.encoding == "qr" ?
+                              <div>
+                                <QRCode style={{
+                                  height: 100,
+                                  width: 100
+                                }} value={bar_code.value} />
+                                <p className="amount" style={{ textAlign: 'center' }}>{receipt.extra_receipt_view?.bar_code.display_value && receipt.extra_receipt_view?.bar_code.display_value}</p>
+                              </div>
+                              : null
+                          }
+                        </div>
+                      </div>
+                    }
                     {/* Discounts */}
                     {((pdf || popupOpen.type == "discounts") && receipt.extended_receipt_logic?.discounts) && receipt.extended_receipt_logic?.discounts.map((discount, index) => {
                       return (
                         <div key={"discounts" + index}>
                           <div className="box head">
-                            <h5><span>{lang == "no" ? "Rabatt" : "Discount"}</span></h5>
+                            <h5><span>{lang == "no" ? "Kupong" : "Coupons"}</span></h5>
                           </div>
                           <div className="box">
 
                             <div style={{ marginBottom: 10 }}>
-                              <h5>{lang == "no" ? "Rabatt på artikkel: " : "Discount on article: "}</h5>
+                              <h5>{lang == "no" ? "Kupong på artikkel: " : "Coupon on article: "}</h5>
 
                               {discount.art_numbers?.map((discount_art_nr, index) => {
                                 return <p key={"discount_art_nr" + index}>{discount_art_nr}</p>
@@ -498,11 +477,10 @@ const Home = (props: any) => {
                       if ((pdf || (popupOpen.type === article.type && index === popupOpen.index)) && (article.bar_codes?.length && article.bar_codes?.length > 0)) return (
                         <div key={"article-ticket" + index} id={"index-" + index}>
                           <div className="box head">
-                            <h5><span>{article.type === 'ticket' ? "Ticket" : article.type === 'credit' ? "Credit" : article.type}</span></h5>
+                            <h5><span>{lang == "no" ? (article.type === "ticket" ? "Billett" : article.type ? "Gavekort" : article.type) : (article.type === "Credit" ? "Gift card" : article.type)}</span></h5>
+
                           </div>
                           <div className='box'>
-
-
 
                             {article.art_name && <p style={{ marginBottom: 10 }}>{article.art_name}</p>}
 
@@ -644,19 +622,18 @@ const Article = ({ index, article, lang, receipt, pdf, openPopup }: { index: num
       <div>
         {/* Title */}
         <p className='article-divider' onClick={() => hasExpand && setExpanded(!expanded)}>
-          {hasExpand && <span className='expand' style={{ cursor: "pointer" }}>{expanded ? '-' : '+'}</span>}
+          {hasExpand && <span className='expand' style={{ cursor: "pointer" }}>{expanded ?
+            <img src={minus.src} alt="Collapse" /> :
+            <img src={plus.src} alt="Expand" />
+          }
+          </span>}
           {article.art_name}
         </p>
-        {/* Tag */}
-        {article.return &&
-          <div className='tag'>
-            {lang == "no" ? "Returnert" : "Returned"}
-          </div>
-        }
+
         {/* Ticket */}
         {(article.bar_codes?.length && article.bar_codes?.length > 0 && !pdf) &&
           <div className='tag button' onClick={() => openPopup(article.type, index)}>
-            {lang == "no" ? "Vis " + (article.type === "ticket" ? "billett" : article.type ? "kreditt" : article.type) : "Show " + article.type}
+            {lang == "no" ? "Vis " + (article.type === "ticket" ? "billett" : article.type ? "gavekort" : article.type) : "Show " + (article.type === "credit" ? "Gift card" : article.type)}
 
           </div>
         }
@@ -705,7 +682,7 @@ const Article = ({ index, article, lang, receipt, pdf, openPopup }: { index: num
       </div>
 
       {/* Sum */}
-      <div>
+      <div style={{ textAlign: "right" }}>
         <p className='amount article-divider'> {article.return === true && "-"}
           {
             parseFloat((article.art_final_price || 0).toString())
@@ -716,6 +693,12 @@ const Article = ({ index, article, lang, receipt, pdf, openPopup }: { index: num
                 maximumFractionDigits: 2,
               })}
         </p>
+        {/* Returned */}
+        {article.return &&
+          <div className='tag' style={{ marginRight: 0 }}>
+            {lang == "no" ? "Returnert" : "Returned"}
+          </div>
+        }
         {article.additions?.vat_groups ?
           article.additions.vat_groups.map((group: any, index: any) => {
             return (
@@ -735,6 +718,68 @@ const Article = ({ index, article, lang, receipt, pdf, openPopup }: { index: num
 
     </div>
   </div>)
+}
+const Payment = ({ index, payment, lang, receipt, pdf }: { index: number, payment: any, lang: any, receipt: Receipt, pdf: boolean }) => {
+
+  const [expanded, setExpanded] = useState(pdf)
+  let hasExpand = !pdf && (
+    !!payment.payment_method ||
+    !!payment.timestamp ||
+    !!payment.national_merchant_number ||
+    !!payment.payment_method_type ||
+    !!payment.payment_method_owner ||
+    !!payment.masked_pan ||
+    !!payment.aid_nr ||
+    !!payment.tvr_nr ||
+    !!payment.tsi_nr ||
+    !!payment.ref_nr ||
+    !!payment.response_code ||
+    !!payment.currency ||
+    !!payment.payment_amount ||
+    !!payment.tip_amount
+  )
+
+  return (
+
+    <div className="box head" key={"payment-" + index}>
+      <div className='split'>
+        <div>
+          <p className='article-divider' onClick={() => hasExpand && setExpanded(!expanded)}>
+            {hasExpand && <span className='expand' style={{ cursor: "pointer" }}>{expanded ?
+              <img src={minus.src} alt="Collapse" /> :
+              <img src={plus.src} alt="Expand" />
+            }
+            </span>}
+            {lang == "no" ? "Betaling" : "Payment"}</p>
+        </div>
+        <div>
+          <p className="amount article-divider">
+            {payment.moneyback === true && "-"}
+            {parseFloat((payment.payment_amount || 0).toString()).toLocaleString(receipt.merchant.merchant_country_code, {
+              useGrouping: true,
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}</p>
+        </div>
+      </div>
+      <div>
+        {(expanded && !!payment.payment_method) && <p className="amount small">{payment.payment_method}</p>}
+        {(expanded && !!payment.timestamp) && <p className="amount small">{new Date(payment.timestamp).toLocaleDateString(receipt.merchant.merchant_country_code, { year: "numeric", month: "numeric", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric" })}</p>}
+        {(expanded && !!payment.national_merchant_number) && <p className="amount small">Bax: {payment.national_merchant_number} -{" "}{payment.bank_terminal_id}</p>}
+        {(expanded && !!payment.payment_method_type) && <p className="amount small">{payment.payment_method_type}</p>}
+        {(expanded && !!payment.payment_method_owner) && <p className="amount small">{payment.payment_method_owner}</p>}
+        {(expanded && !!payment.masked_pan) && <p className="amount small">{payment.masked_pan}</p>}
+        {(expanded && !!payment.aid_nr) && <p className="amount small">AID: {payment.aid_nr}</p>}
+        {(expanded && !!payment.tvr_nr) && <p className="amount small">TVR: {payment.tvr_nr}</p>}
+        {(expanded && !!payment.tsi_nr) && <p className="amount small">TSI: {payment.tsi_nr}</p>}
+        {(expanded && !!payment.ref_nr) && <p className="amount small">Ref.: {payment.ref_nr}</p>}
+        {(expanded && !!payment.response_code) && <p className="amount small">{lang == "no" ? "Respons: " : "Response: "}{payment.response_code}</p>}
+        {(expanded && !!payment.currency) && <p className="amount small">{payment.currency}</p>}
+        {(expanded && !!payment.payment_amount) && <p className="amount small">{payment.payment_amount}</p>}
+        {(expanded && !!payment.tip_amount) && <p className="amount small">+ {payment.tip_amount} tips</p>}
+      </div>
+    </div>
+  )
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
