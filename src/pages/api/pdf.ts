@@ -5,6 +5,14 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  res.setHeader("Access-Control-Allow-Origin", "https://*.zeipt.com");
+  res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  if (req.method === "OPTIONS") {
+    // Preflight request response
+    res.status(200).end();
+    return;
+  }
   let puppeteer;
   if (process.env.NODE_ENV === "development") {
     puppeteer = await import("puppeteer");
