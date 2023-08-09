@@ -107,17 +107,23 @@ h5 {
 }
 .button {
   cursor: pointer;
-  background-color: #f8f8f8;
+  background-color: #3dbf7140;
   border-radius: 5px;
   color: black;
-  border: 1px solid #ccc;
+  border: 1px solid #3dbf7140;
   font-family: inherit;
 }
 .button:disabled {
   opacity: 0.5;
   pointer-events: none;
 }
-
+select {
+  margin-right: 10px;
+  border-radius: 5px;
+  padding: 5px 5px;
+  font-size: 12px;
+  border: 1px solid #3dbf7140;
+}
 .sticky-bottom {
   position: sticky;
   bottom: 0;

@@ -33,6 +33,7 @@
   },
   "devDependencies": {
     "@types/bwip-js": "^3.0.0",
+    "@types/puppeteer": "^7.0.4",
     "@types/react-pdf": "^6.2.0"
   }
 }

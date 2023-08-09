@@ -1,0 +1,1905 @@
+{
+  "openapi": "3.0.0",
+  "servers": [
+    {
+      "url": "https://api.zeipt.io"
+    }
+  ],
+  "info": {
+    "description": "<p>\n<br/>\n<br/>\n<b>Welcome to Zeipt API</b>\n<br/>\n<b style=\"font-size: 12px\">Zeipt API version: 02.07.2023</b>\n<br/><br/>\nWe're excited to see that you're among the first to take the next step into a more <b>sustainable</b> and <b>cost-efficient</b> retail.\n\n<br/><br/>\n\nStart testing by using <a href=\"https://www.getpostman.com/downloads/\" target=\"_blank\">Postman</a>.\n\n\n</p>\n\n# Authentication\n<!-- ReDoc-Inject: <security-definitions> -->\n\n# Global Error Responses\n\n<br>\n<br>\n<br>\n<p>These error responses apply to all endpoints:</p>\n\n\n| Status code | Status Description | Rule | Description | \n|-----|-------------------|-------------------------|-------------------------|\n| 400 | Bad Request | - | Invalid json format |\n| 400 | Bad Request | - | Timestamp doesn't follow the <a href=\"https://datatracker.ietf.org/doc/html/rfc3339#section-5.6\"><b>RFC 3339</b></a> format |\n| 400 | Bad Request | email | Email doesn't follow the <a href=\"https://en.wikipedia.org/wiki/Email_address\"><b>Email</b></a> format |\n| 400 | Bad Request | country_calling_code | The calling codes does not follow <a href=\"https://en.wikipedia.org/wiki/E.164\"><b>E.164</b></a> format |\n| 400 | Bad Request | legacy_telephone_number | The phone number does not follow <a href=\"https://en.wikipedia.org/wiki/E.164\"><b>E.164</b></a> format |\n| 400 | Bad Request | iso4217 | Currency doesn't follow the <a href=\"https://en.wikipedia.org/wiki/ISO_4217\"><b>ISO 4217</b></a> format |\n| 400 | Bad Request | iso3166_1_alpha2 | Country code doesn't follow the <a href=\"https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2\"><b>ISO 3166-1 alpha 2</b></a> format |\n| 401 | Unauthorized | - | Token not valid |\n| 401\t| Unauthorized | - | Token timestamp have expired |\n| 401 | Unauthorized | - | Api key not valid |\n| 403 | Forbidden | - | You don’t have access or permission for this client |\n| 404 | Not Found | - | The endpoint or method you're trying to reach or use is not found |\n| 409 | Conflict | - | The resource/process you are trying to request have allready been created/processed, please use the PUT method instead if you want to update an existing resource\n",
+    "version": "02.07.2023",
+    "title": "Smart receipts",
+    "contact": {
+      "name": "API Support",
+      "email": "ops@zeipt.com"
+    },
+    "x-logo": {
+      "url": "logo.svg?v=2",
+      "altText": "Zeipt logo"
+    }
+  },
+  "tags": [
+    {
+      "name": "JWT service .cashier .apps"
+    },
+    {
+      "name": "Check alive .cashier .apps"
+    },
+    {
+      "name": "White label dashboard -User .cashier .apps"
+    },
+    {
+      "name": "White label dashboard -Company .cashier .apps"
+    },
+    {
+      "name": "White label dashboard -Client .cashier .apps"
+    },
+    {
+      "name": "White label dashboard -RBAC .cashier .apps"
+    },
+    {
+      "name": "White label dashboard -Discounts .cashier .apps"
+    },
+    {
+      "name": "White label dashboard -File service .cashier .apps"
+    },
+    {
+      "name": "White label dashboard .cashier .apps"
+    },
+    {
+      "name": "Company Settings .cashier .apps"
+    },
+    {
+      "name": "Client settings .cashier .apps"
+    },
+    {
+      "name": "Client settings -lvl 3 identification .cashier"
+    },
+    {
+      "name": "Webhook .cashier .apps"
+    },
+    {
+      "name": "Merchant handling .cashier"
+    },
+    {
+      "name": "Application handling .apps"
+    },
+    {
+      "name": "End user handling .apps"
+    },
+    {
+      "name": "End user handling -Version 3 .apps"
+    },
+    {
+      "name": "End user handling -lvl 3 identification .apps"
+    },
+    {
+      "name": "End user handling -Sharing .apps"
+    },
+    {
+      "name": "Receipt as a Service .cashier"
+    },
+    {
+      "name": "Receipt as a Service .apps"
+    },
+    {
+      "name": "File service .cashier .apps"
+    },
+    {
+      "name": "Public endpoints .cashier .apps"
+    },
+    {
+      "name": "Other .cashier .apps"
+    }
+  ],
+  "security": [
+    {
+      "Dashboard_Token": []
+    },
+    {
+      "Provider_Token": []
+    },
+    {
+      "User_Token": []
+    },
+    {
+      "Public_Token": []
+    },
+    {
+      "ApiKey": []
+    }
+  ],
+  "paths": {
+    "/merchant/receipt/send": {
+      "post": {
+        "tags": ["Receipt as a Service .cashier"],
+        "security": [
+          {
+            "Provider_Token": []
+          },
+          {
+            "ApiKey": []
+          }
+        ],
+        "operationId": "sendReceipt.cashier",
+        "summary": "Send receipt",
+        "description": "Our main service, use this endpoint to process a receipt object through Zeipt systems to the end user on behalf of your merchant client\n<br/>\n<b style=\"font-size: 12px\">Note:</b> You can use the downloaded swagger file in postman as a request sample directly, Only add <code>merchant_gcid</code> and a customer id in <code>customer_delivery</code> object, preferably your own email to quickly see the output to view.\n",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SendReceipt"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReceiptResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "SendReceipt": {
+        "type": "object",
+        "description": "Either <code>payments</code>  or <code>invoices</code> arrays needs to have atleast one object",
+        "required": [
+          "version",
+          "receipt_number",
+          "receipt_type",
+          "timestamp",
+          "merchant",
+          "total"
+        ],
+        "properties": {
+          "version": {
+            "type": "string",
+            "enum": ["2.1.0"],
+            "example": "2.1.0",
+            "description": "The version of this Zeipt receipt format. This defines how Zeipt should parse the current receipt."
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2020-09-15T15:53:00+01:00",
+            "description": "<code>YYYY-MM-DDThh:mm:ss±hh:mm</code> <a href=\"https://datatracker.ietf.org/doc/html/rfc3339#section-5.6\"><b>RFC 3339</b></a> format"
+          },
+          "receipt_number": {
+            "type": "string",
+            "format": "id",
+            "pattern": "^[a-zA-Z0-9@!#$%&*+\\-/=?^_\\x60{|}~:;.]*$",
+            "example": "123i92301",
+            "description": "Your own defined receipt number for the receipt."
+          },
+          "receipt_type": {
+            "type": "string",
+            "enum": [
+              "elektronisk salgskvittering",
+              "elektronisk returkvittering",
+              "elektronisk proforma-kvittering",
+              "elektronisk treningskvittering",
+              "elektronisk utleveringsseddel"
+            ],
+            "example": "elektronisk salgskvittering",
+            "description": "The annotation on what type of receipt this is."
+          },
+          "receipt_description": {
+            "type": "string",
+            "example": "Something free text decription",
+            "description": "Free text \"Header\" field about the receipt or order object"
+          },
+          "receipt_producer_certificate": {
+            "type": "string",
+            "example": "96b26f6cc52edd91cd52ac5baa1a802f4ff04daab07a308f0b2e897cc807e4bb",
+            "description": "Hash certificate used by the cashier to validate receipt offline with its private key"
+          },
+          "relate_order_numbers": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "id",
+              "pattern": "^[a-zA-Z0-9@!#$%&*+\\-/=?^_\\x60{|}~:;.]*$"
+            },
+            "example": ["Order_2135po3"],
+            "description": "The merchant or zeipt defined order numbers for future reference"
+          },
+          "customer_deliveries": {
+            "type": "array",
+            "description": "Fill in atleast one customer identification, <code>optional</code> send on email/sms directly with the help of setting the related boolean to true",
+            "items": {
+              "type": "object",
+              "properties": {
+                "application_number": {
+                  "type": "string",
+                  "format": "uuid",
+                  "pattern": "^[a-z0-9-]*$",
+                  "example": "70bf66b9-1b65-4e07-ad7b-a8fcd77fcb44",
+                  "description": "The customers application reference number in Zeipt systems, when using this objects identifications you use this key to do an conditional lookup, allowing only users belonging to this applications to be linked to the receipt with the identifications in this object"
+                },
+                "payment_medium_reference": {
+                  "type": "object",
+                  "description": "Input the customers payment mediums reference value here provided by the <b>PSP</b> (Payment Service Provider)",
+                  "properties": {
+                    "token_provider": {
+                      "type": "string",
+                      "enum": ["verifone", "nets"],
+                      "example": "verifone",
+                      "description": "The <b>PSP</b> (Payment Service Provider) providing the token from its payment terminal/e-commerce checkout"
+                    },
+                    "zeipt_card_token": {
+                      "type": "string",
+                      "format": "id",
+                      "pattern": "^[a-zA-Z0-9@!#$%&*+\\-/=?^_\\x60{|}~:;.]*$",
+                      "example": "4Z07BY79KA1307SR9X",
+                      "description": "The reference value in Zeipt's system for the customer's payment medium, received from the <b>PSP</b> (Payment Service Provider)."
+                    }
+                  }
+                },
+                "custom_customer_reference": {
+                  "type": "string",
+                  "format": "id",
+                  "pattern": "^[a-zA-Z0-9@!#$%&*+\\-/=?^_\\x60{|}~:;.]*$",
+                  "example": "PFsK#!dl?&!Q17LOsN02ad=",
+                  "description": "A custom reference value, it can be any kind of identification such as QR/bar-code user id, car license plate, social security number etc..."
+                },
+                "email": {
+                  "type": "object",
+                  "description": "The customer's email",
+                  "properties": {
+                    "email_address": {
+                      "type": "string",
+                      "maxLength": 254,
+                      "format": "email",
+                      "pattern": "^[a-zA-Z0-9@!#$%&'*+\\-/=?^_\\x60{|}~.]*$",
+                      "example": "customer@example.com",
+                      "description": "<a href=\"https://en.wikipedia.org/wiki/Email_address\"><b>Email</b></a> format"
+                    },
+                    "email_delivery": {
+                      "type": "boolean",
+                      "default": false,
+                      "example": false,
+                      "description": "If true, deliver the receipt directly to the customer's email as well."
+                    }
+                  }
+                },
+                "telephone": {
+                  "type": "object",
+                  "required": ["country_calling_code", "number"],
+                  "description": "The customer's phone number.",
+                  "properties": {
+                    "country_calling_code": {
+                      "type": "string",
+                      "maxLength": 4,
+                      "format": "calling_code",
+                      "pattern": "^[+0-9]*$",
+                      "example": "+47",
+                      "description": "The phone number country code <a href=\"https://en.wikipedia.org/wiki/E.123\"><b>E.123</b></a> format"
+                    },
+                    "number": {
+                      "type": "string",
+                      "maxLength": 12,
+                      "format": "tele_number",
+                      "pattern": "^[0-9]*$",
+                      "example": "97419601",
+                      "description": "The phone number, <a href=\"https://en.wikipedia.org/wiki/E.123\"><b>E.123</b></a> format"
+                    },
+                    "sms_delivery": {
+                      "type": "boolean",
+                      "default": false,
+                      "example": false,
+                      "description": "If true, deliver the receipt as sms directly to the customer's phone as well."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "merchant": {
+            "type": "object",
+            "description": "Description of the store where the purchase was made.",
+            "required": [
+              "merchant_gcid",
+              "org_number",
+              "merchant_country_code"
+            ],
+            "properties": {
+              "merchant_gcid": {
+                "type": "string",
+                "format": "id",
+                "pattern": "^[a-zA-Z0-9@!#$%&*+\\-/=?^_\\x60{|}~:;.]*$",
+                "example": "merchant_1",
+                "description": "Your merchant type customer client id, Has to be a unique ID defined by you"
+              },
+              "org_number": {
+                "type": "string",
+                "example": "916809026MVA",
+                "description": "The organization / VAT identification number of the merchant, <a href=\"https://en.wikipedia.org/wiki/VAT_identification_number\"><b>VAT ID</b></a>"
+              },
+              "merchant_country_code": {
+                "type": "string",
+                "format": "country_code",
+                "pattern": "^[a-zA-Z]*$",
+                "maxLength": 2,
+                "example": "NO",
+                "description": "<a href=\"https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2\"><b>ISO 3166-1 alpha 2</b></a> format"
+              },
+              "purchase_location": {
+                "type": "object",
+                "description": "The store where the purchase was made and its location.",
+                "required": [
+                  "purchase_country_code",
+                  "city",
+                  "zip_code",
+                  "address",
+                  "store_name"
+                ],
+                "properties": {
+                  "purchase_country_code": {
+                    "type": "string",
+                    "format": "country_code",
+                    "pattern": "^[a-zA-Z]*$",
+                    "maxLength": 2,
+                    "example": "NO",
+                    "description": "<a href=\"https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2\"><b>ISO 3166-1 alpha 2</b></a> format"
+                  },
+                  "city": {
+                    "type": "string",
+                    "example": "Oslo",
+                    "description": "The city of the purchase location."
+                  },
+                  "zip_code": {
+                    "type": "string",
+                    "example": "0254",
+                    "description": "The zip code of the purchase location."
+                  },
+                  "address": {
+                    "type": "string",
+                    "example": "Veien 23",
+                    "description": "The address of the purchase location."
+                  },
+                  "store_name": {
+                    "type": "string",
+                    "example": "Shop&Go",
+                    "description": "The name of the store."
+                  },
+                  "cashier_number": {
+                    "type": "string",
+                    "example": "543",
+                    "description": "The identifier of the cashier."
+                  },
+                  "store_number": {
+                    "type": "string",
+                    "example": "22",
+                    "description": "The identifier of the store."
+                  }
+                }
+              },
+              "telephone": {
+                "type": "object",
+                "required": ["country_calling_code", "number"],
+                "description": "The store's phone number.",
+                "properties": {
+                  "country_calling_code": {
+                    "type": "string",
+                    "maxLength": 4,
+                    "format": "calling_code",
+                    "pattern": "^[+0-9]*$",
+                    "example": "+47",
+                    "description": "The phone number country code <a href=\"https://en.wikipedia.org/wiki/E.123\"><b>E.123</b></a> format"
+                  },
+                  "number": {
+                    "type": "string",
+                    "maxLength": 12,
+                    "format": "tele_number",
+                    "pattern": "^[0-9]*$",
+                    "example": "97419601",
+                    "description": "The phone number, <a href=\"https://en.wikipedia.org/wiki/E.123\"><b>E.123</b></a> format"
+                  }
+                }
+              },
+              "email": {
+                "type": "string",
+                "maxLength": 254,
+                "format": "email",
+                "pattern": "^[a-zA-Z0-9@!#$%&'*+\\-/=?^_\\x60{|}~.]*$",
+                "example": "store@example.com",
+                "description": "The store's email address, <a href=\"https://en.wikipedia.org/wiki/Email_address\"><b>Email</b></a> format"
+              },
+              "website": {
+                "type": "string",
+                "format": "url",
+                "pattern": "^[a-zA-Z0-9-._~()'!*:@,;/]*$",
+                "example": "https://www.example.com",
+                "description": "The store's website."
+              },
+              "travel_reference": {
+                "type": "object",
+                "required": [
+                  "travel_driver_id",
+                  "travel_driver_name",
+                  "car_license_plate"
+                ],
+                "description": "The purchase location references in case its not a standard physical location eg. taxi.",
+                "properties": {
+                  "travel_driver_id": {
+                    "type": "string",
+                    "example": "653",
+                    "description": "ID of the driver. Required if \"travel_reference\" object are to be used instead of \"purchase_location\" object"
+                  },
+                  "travel_driver_name": {
+                    "type": "string",
+                    "example": "Jeppe Skaar",
+                    "description": "Name of the driver. Required if \"travel_reference\" object are to be used instead of \"purchase_location\" object"
+                  },
+                  "travel_driver_certification": {
+                    "type": "string",
+                    "example": "ABF035JS46KA",
+                    "description": "The national vehicle certification number for the driver."
+                  },
+                  "travel_company_certification": {
+                    "type": "string",
+                    "example": "ABF035JS46KA",
+                    "description": "The national certification number for the company."
+                  },
+                  "car_license_plate": {
+                    "type": "string",
+                    "example": "AF46035",
+                    "description": "The license plate of the vehicle. Required if \"travel_reference\" object are to be used instead of \"purchase_location\" object"
+                  }
+                }
+              }
+            }
+          },
+          "total": {
+            "type": "object",
+            "description": "The final totals of the receipt. Includes discounts, recycling fees, taxes and tip. May also be money back.",
+            "required": ["additions", "final_price", "total_currency"],
+            "properties": {
+              "total_moneyback": {
+                "type": "boolean",
+                "default": false,
+                "example": false,
+                "description": "If true, the amounts in total seen as beeing money paid back to the customer, resulting in a negative sum on the representation of receipt."
+              },
+              "total_currency": {
+                "type": "string",
+                "format": "currency",
+                "pattern": "^[a-zA-Z]*$",
+                "maxLength": 3,
+                "example": "NOK",
+                "description": "<a href=\"https://en.wikipedia.org/wiki/ISO_4217\"><b>ISO 4217</b></a> format, The currency set by the seller"
+              },
+              "total_vat_name": {
+                "type": "string",
+                "example": "MVA",
+                "description": "The name of the vat, set by the seller"
+              },
+              "total_art_price_with_vat": {
+                "type": "number",
+                "example": 24640,
+                "description": "Total sum of all article objects \"art_price_with_vat\" but before discounts in total object, Without article fee (Recycling)"
+              },
+              "subtractions": {
+                "type": "object",
+                "description": "The substractions to the total price",
+                "properties": {
+                  "discounts": {
+                    "type": "array",
+                    "description": "Array of discounts for the total purchase amounts.",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "merchant_sorting": {
+                          "type": "string",
+                          "example": "JH1YA48MFM7SQPT5",
+                          "description": "The index value for grouping discount objects to a merchant defined sorting"
+                        },
+                        "merchant_reference": {
+                          "type": "string",
+                          "example": "PHFUIOLK",
+                          "description": "The reference value defined by the merchant for the discount object"
+                        },
+                        "description": {
+                          "type": "string",
+                          "example": "10% above 10000 NOK",
+                          "description": "The free text description of the discount"
+                        },
+                        "amount": {
+                          "type": "number",
+                          "example": 2464,
+                          "description": "The discount effect as described in amount"
+                        },
+                        "percentage": {
+                          "type": "number",
+                          "format": "percentage_form",
+                          "example": 10,
+                          "description": "<code>PERCENTAGE FORM</code> The discount effect as described in percentage, we expect it to be a fraction of 100 eg. 0,15 = 0,15% & 15 = 15%"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "total_price_without_vat": {
+                "type": "number",
+                "example": 17740.8,
+                "description": "The total price after global discounts before VAT, eg the base amount for VAT, Without fee (Recycling & tip)"
+              },
+              "additions": {
+                "type": "object",
+                "description": "The additions to total price to get Final price",
+                "required": ["total_vat"],
+                "properties": {
+                  "total_vat": {
+                    "type": "number",
+                    "example": 4435.2,
+                    "description": "Total vat amount after global discount"
+                  },
+                  "total_tip": {
+                    "type": "number",
+                    "example": 100,
+                    "description": "Total tip amount from the payment objects"
+                  },
+                  "total_recycling": {
+                    "type": "number",
+                    "example": 200,
+                    "description": "Total amount of recycling fee from the article objects"
+                  }
+                }
+              },
+              "total_price_with_vat": {
+                "type": "number",
+                "example": 22176,
+                "description": "Total price after global discount, Without fee (Recycling & tip)"
+              },
+              "final_price": {
+                "type": "number",
+                "example": 22476,
+                "description": "The grand total, including fee (Recycling & tip)"
+              },
+              "extra_sum_values": {
+                "type": "object",
+                "description": "Summarized extra values, For enhanced view representation",
+                "properties": {
+                  "final_price_rounded": {
+                    "type": "number",
+                    "example": 22476,
+                    "description": "The grand total amount after rounding, including fee (Recycling & tip)"
+                  },
+                  "total_discount": {
+                    "type": "number",
+                    "example": 8624,
+                    "description": "The total amount of discount (total and articles)"
+                  },
+                  "total_return": {
+                    "type": "number",
+                    "example": 0,
+                    "description": "The total amount of return from the article objects"
+                  }
+                }
+              }
+            }
+          },
+          "articles": {
+            "type": "array",
+            "description": "Each article in the receipt. Either a sale or return.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "reference_of_origin": {
+                  "type": "object",
+                  "description": "In case of return, point to the zeipt receipt nr with the originaly purchased article that should be returned.",
+                  "properties": {
+                    "reference_of_origin_receipt": {
+                      "type": "string",
+                      "format": "ulid",
+                      "pattern": "^[A-Z0-9-]*$",
+                      "example": "01FPNEJ5C5TGKHZMK4JG82AS76",
+                      "description": "Reference to the receipt (zeipt_receipt_transnr) where the article was purchased."
+                    },
+                    "reason_for_return": {
+                      "type": "string",
+                      "example": "Stain on left pillow",
+                      "description": "The short freetext about the reason for return of article"
+                    }
+                  }
+                },
+                "return": {
+                  "type": "boolean",
+                  "default": false,
+                  "example": false,
+                  "description": "Set this to true if the article is a return."
+                },
+                "type": {
+                  "type": "string",
+                  "enum": ["credit", "ticket"],
+                  "example": "credit",
+                  "description": "Set the enum type of this article, this field directly effects the view of the article"
+                },
+                "merchant_sorting": {
+                  "type": "string",
+                  "example": "JH1YA48MFM7SQPT5",
+                  "description": "The index value for grouping credit/ticket objects to a merchant defined sorting"
+                },
+                "merchant_reference": {
+                  "type": "string",
+                  "example": "PHFUIOLK",
+                  "description": "The reference value defined by the merchant for the ticket/credit object"
+                },
+                "art_number": {
+                  "type": "string",
+                  "example": "230027A",
+                  "description": "The identifier of this article as set by the merchant."
+                },
+                "art_saft_articlegroup_id": {
+                  "type": "string",
+                  "example": "11",
+                  "description": "The article group in SAFT format."
+                },
+                "art_name": {
+                  "type": "string",
+                  "example": "Beige Arnt Sofa",
+                  "description": "The name of the article in free text"
+                },
+                "art_description": {
+                  "type": "string",
+                  "example": "I tyg",
+                  "description": "Description of the article object in free text"
+                },
+                "specified": {
+                  "type": "object",
+                  "description": "Specified info about the article object, used for more specific use cases",
+                  "properties": {
+                    "floor_number": {
+                      "type": "string",
+                      "example": "3",
+                      "description": "The floor number of the event/room"
+                    },
+                    "room_number": {
+                      "type": "string",
+                      "example": "305",
+                      "description": "The room number of the event/room"
+                    },
+                    "entrance": {
+                      "type": "string",
+                      "example": "3A",
+                      "description": "The entrence reference of the event/room"
+                    },
+                    "row_number": {
+                      "type": "string",
+                      "example": "6",
+                      "description": "The row number of the event"
+                    },
+                    "seat_number": {
+                      "type": "string",
+                      "example": "22",
+                      "description": "The seat number of the event"
+                    },
+                    "event_start": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2020-09-15T15:53:00+01:00",
+                      "description": "When the event starts (Taxi, Flight, Hotel stay, Movies, Sports, etc...) (<code>YYYY-MM-DDThh:mm:ss±hh:mm</code> <a href=\"https://datatracker.ietf.org/doc/html/rfc3339#section-5.6\"><b>RFC 3339</b></a> format"
+                    },
+                    "event_ending": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2020-09-15T15:53:00+01:00",
+                      "description": "When the event ends (Taxi, Flight, Movies, Hotel stay, Sports etc...) <code>YYYY-MM-DDThh:mm:ss±hh:mm</code> <a href=\"https://datatracker.ietf.org/doc/html/rfc3339#section-5.6\"><b>RFC 3339</b></a> format"
+                    },
+                    "expiration_date": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2020-09-15T15:53:00+01:00",
+                      "description": "The expiration date of the article, following the <code>YYYY-MM-DDThh:mm:ss±hh:mm</code> <a href=\"https://datatracker.ietf.org/doc/html/rfc3339#section-5.6\"><b>RFC 3339</b></a> format"
+                    }
+                  }
+                },
+                "geographic": {
+                  "type": "object",
+                  "description": "Used if geographic description of article event is suitable",
+                  "properties": {
+                    "departure_reference": {
+                      "type": "string",
+                      "example": "OSL",
+                      "description": "Suitable reference of departure location if applicable"
+                    },
+                    "arrival_reference": {
+                      "type": "string",
+                      "example": "FRA",
+                      "description": "Suitable reference of arrival location if applicable"
+                    },
+                    "start_location": {
+                      "type": "object",
+                      "description": "The start location the event (Taxi, Flight, Hotel stay, Movies, Sports etc...)",
+                      "properties": {
+                        "country_code": {
+                          "type": "string",
+                          "example": "NO",
+                          "description": "<a href=\"https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2\"><b>SO 3166-1 alpha 2</b></a> format"
+                        },
+                        "city": {
+                          "type": "string",
+                          "example": "Oslo",
+                          "description": "The city of the start location of the event."
+                        },
+                        "zip_code": {
+                          "type": "string",
+                          "example": "0158",
+                          "description": "The zip code of the start location of the event"
+                        },
+                        "address": {
+                          "type": "string",
+                          "example": "Nedre Vollgate 3",
+                          "description": "The address of the start location of the event."
+                        }
+                      }
+                    },
+                    "end_location": {
+                      "type": "object",
+                      "description": "The end location of the event (Taxi, Flight, Hotel stay, Movies, Sports etc...)",
+                      "properties": {
+                        "country_code": {
+                          "type": "string",
+                          "example": "NO",
+                          "description": "<a href=\"https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2\"><b>SO 3166-1 alpha 2</b></a> format"
+                        },
+                        "city": {
+                          "type": "string",
+                          "example": "Oslo",
+                          "description": "The city of the end location of the event."
+                        },
+                        "zip_code": {
+                          "type": "string",
+                          "example": "0552",
+                          "description": "The zip code of the end location event."
+                        },
+                        "address": {
+                          "type": "string",
+                          "example": "Olaf Ryes plass",
+                          "description": "The address of the end location event."
+                        }
+                      }
+                    },
+                    "distance_value": {
+                      "type": "number",
+                      "example": 7,
+                      "description": "Distance of journey (Taxi, Flight)"
+                    },
+                    "distance_value_definition": {
+                      "type": "string",
+                      "format": "distance_definition",
+                      "enum": ["km", "mi"],
+                      "example": "km",
+                      "description": "Metric or imperial system, The definition of the distance value."
+                    }
+                  }
+                },
+                "bar_codes": {
+                  "type": "array",
+                  "description": "Barcode object, If article object are expected to be able to be used as a ticket/credit object without zeipt system processing",
+                  "items": {
+                    "type": "object",
+                    "required": ["encoding", "value"],
+                    "properties": {
+                      "encoding": {
+                        "type": "string",
+                        "format": "scanner_encoding",
+                        "enum": [
+                          "code_128",
+                          "code_39",
+                          "ean_13",
+                          "ean_8",
+                          "interleaved_2_of_5",
+                          "qr"
+                        ],
+                        "example": "code_128",
+                        "description": "The encoding format of the barcode"
+                      },
+                      "value": {
+                        "type": "string",
+                        "format": "id",
+                        "pattern": "^[a-zA-Z0-9@!#$%&*+\\-/=?^_\\x60{|}~:;.]*$",
+                        "example": "GH7T1Y2H3LKA577HF",
+                        "description": "The barcode value as read by the barcode reader"
+                      },
+                      "display_value": {
+                        "type": "string",
+                        "example": "12848939182",
+                        "description": "The barcode value to be visible in your view"
+                      }
+                    }
+                  }
+                },
+                "art_original_values": {
+                  "type": "object",
+                  "description": "The original prices before discounts and fees",
+                  "properties": {
+                    "quantity_original_price": {
+                      "type": "number",
+                      "example": 15400,
+                      "description": "Original price per quantity before additions and substractions"
+                    },
+                    "art_original_price": {
+                      "type": "number",
+                      "example": 30800,
+                      "description": "Total original price for article before additions and substractions"
+                    }
+                  }
+                },
+                "quantity_type": {
+                  "type": "string",
+                  "maxLength": 3,
+                  "example": "stk",
+                  "description": "Metric or imperial system, Defines the type of quantity"
+                },
+                "quantity": {
+                  "type": "number",
+                  "example": 2,
+                  "description": "The quantity of the article"
+                },
+                "subtractions": {
+                  "type": "object",
+                  "description": "The substractions to the article price",
+                  "properties": {
+                    "discounts": {
+                      "type": "array",
+                      "description": "Discounts on the article",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "merchant_sorting": {
+                            "type": "string",
+                            "example": "JH1YA48MFM7SQPT5",
+                            "description": "The index value for grouping discount objects to a merchant defined sorting"
+                          },
+                          "merchant_reference": {
+                            "type": "string",
+                            "example": "PHFUIOLK",
+                            "description": "The reference value defined by the merchant for the discount object"
+                          },
+                          "description": {
+                            "type": "string",
+                            "example": "20 % off på soffa",
+                            "description": "The free text description of the discount"
+                          },
+                          "per_quantity": {
+                            "type": "boolean",
+                            "default": false,
+                            "example": false,
+                            "description": "Set to true if the discount description is on per quantity level"
+                          },
+                          "amount": {
+                            "type": "number",
+                            "example": 3080,
+                            "description": "The discount as described in amount"
+                          },
+                          "percentage": {
+                            "type": "number",
+                            "format": "percentage_form",
+                            "example": 20,
+                            "description": "<code>PERCENTAGE FORM</code> The discount effect as described in percentage, we expect it to be a fraction of 100 eg. 0,15 = 0,15% & 15 = 15%"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "quantity_price_without_vat": {
+                  "type": "number",
+                  "example": 9856,
+                  "description": "Price per article, including substractions."
+                },
+                "art_price_without_vat": {
+                  "type": "number",
+                  "example": 19712,
+                  "description": "The amount after discounts before VAT, eg the base amount for VAT, Without fee (Recycling & tip)"
+                },
+                "additions": {
+                  "type": "object",
+                  "description": "The additions to article price to get Final price",
+                  "properties": {
+                    "vat_groups": {
+                      "type": "array",
+                      "description": "Article’s VAT. The objects should be grouped by percentage.",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "code": {
+                            "type": "string",
+                            "example": "1",
+                            "description": "The VAT code as set by the cashier solution"
+                          },
+                          "name": {
+                            "type": "string",
+                            "example": "MVA",
+                            "description": "The national name of the VAT"
+                          },
+                          "percentage": {
+                            "type": "number",
+                            "format": "percentage_form",
+                            "example": 25,
+                            "description": "<code>PERCENTAGE FORM</code> The VAT as described in percentage, we expect it to be a fraction of 100 eg. 0,15 = 0,15% & 15 = 15%"
+                          },
+                          "base_amount": {
+                            "type": "number",
+                            "example": 19712,
+                            "description": "The base amount the VAT percentage is calculated from"
+                          },
+                          "amount": {
+                            "type": "number",
+                            "example": 4928,
+                            "description": "The VAT as described in amount"
+                          }
+                        }
+                      }
+                    },
+                    "quantity_recycling_fee": {
+                      "type": "number",
+                      "example": 100,
+                      "description": "Recycling fee per quantity."
+                    },
+                    "art_recycling_fee": {
+                      "type": "number",
+                      "example": 200,
+                      "description": "Recycling for the full article object."
+                    }
+                  }
+                },
+                "quantity_price_with_vat": {
+                  "type": "number",
+                  "example": 12320,
+                  "description": "Price per article, including VAT and substractions."
+                },
+                "quantity_final_price": {
+                  "type": "number",
+                  "example": 12420,
+                  "description": "The grand total of the quantity sum with recycling fee included"
+                },
+                "art_price_with_vat": {
+                  "type": "number",
+                  "example": 24640,
+                  "description": "The amount after discounts including vat, Without fee (Recycling & tip)"
+                },
+                "art_final_price": {
+                  "type": "number",
+                  "example": 24840,
+                  "description": "The grand total of the article sum with recycling fee included"
+                }
+              }
+            }
+          },
+          "payments": {
+            "type": "array",
+            "description": "Payment methods and their related event description.",
+            "items": {
+              "type": "object",
+              "required": [
+                "payment_method",
+                "currency",
+                "timestamp",
+                "payment_amount"
+              ],
+              "properties": {
+                "identification": {
+                  "type": "boolean",
+                  "default": false,
+                  "example": false,
+                  "description": "Set to true if this payment object is to be used as identification of the customer. If true the \"payment_method_type\", \"masked_pan\", \"bank_terminal_id\" and \"ref_nr\" is also required values in the payment object and the receipt will always be saved a minimum of 72h"
+                },
+                "online": {
+                  "type": "boolean",
+                  "default": false,
+                  "example": false,
+                  "description": "Set to true to inform that this payment object is an e-commerce checkout, vipps, order application or other types of digital checkouts. And when used together with the \"identification\" set to true the requirement of the \"bank_terminal_id\" key is instead ignored"
+                },
+                "application_ownerships": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^[a-z0-9-]*$"
+                  },
+                  "example": ["70bf66b9-1b65-4e07-ad7b-a8fcd77fcb44"],
+                  "description": "The customers application reference numbers in Zeipt systems, when using this payment object as identification you use this array to do an conditional lookup, allowing only users belonging to these applications to be linked to the receipt during this lookup with this identification"
+                },
+                "payment_method": {
+                  "type": "string",
+                  "format": "payment_method",
+                  "enum": [
+                    "credit_card",
+                    "debit_card",
+                    "cash",
+                    "credit_bank",
+                    "debit_bank",
+                    "own_defined"
+                  ],
+                  "example": "credit_card",
+                  "description": "Type of payment"
+                },
+                "service_provider": {
+                  "type": "object",
+                  "required": ["terminal_data", "type"],
+                  "description": "If you want the Zeipt system to parse the raw data you get in return from the payment service provider, you add it here <code>Note:</code> That the service provider needs to also be stated",
+                  "properties": {
+                    "terminal_data": {
+                      "type": "string",
+                      "example": "something \"terminal text\"",
+                      "description": "The \"terminal text\", \"bax data\", \"terminal string\", \"EMV data\" or other names for the return string of data from the psp"
+                    },
+                    "type": {
+                      "type": "string",
+                      "enum": ["verifone", "nets"],
+                      "example": "verifone",
+                      "description": "The payment processor used for this payment object. <code>Note:</code> This defines what parser we user"
+                    }
+                  }
+                },
+                "payment_method_type": {
+                  "type": "string",
+                  "format": "payment_type",
+                  "enum": [
+                    "bankaxept",
+                    "visa",
+                    "mastercard",
+                    "amex",
+                    "point_scheme",
+                    "gift_card",
+                    "other"
+                  ],
+                  "example": "bankaxept",
+                  "description": "The payment scheme"
+                },
+                "payment_method_owner": {
+                  "type": "string",
+                  "example": "Bank Norwegian",
+                  "description": "The issuer of the payment scheme"
+                },
+                "currency": {
+                  "type": "string",
+                  "format": "currency",
+                  "pattern": "^[a-zA-Z]*$",
+                  "maxLength": 3,
+                  "example": "NOK",
+                  "description": "<a href=\"https://en.wikipedia.org/wiki/ISO_4217\"><b>ISO 4217</b></a> format, The currency used in this payment transaction."
+                },
+                "exchange_rate": {
+                  "type": "number",
+                  "example": 1,
+                  "description": "Exchange rate at the time of the transaction between total_currency and currency."
+                },
+                "moneyback": {
+                  "type": "boolean",
+                  "default": false,
+                  "example": false,
+                  "description": "If true, the payment object is seen as beeing a payment back to the customer with the associated payment method."
+                },
+                "issuer": {
+                  "type": "string",
+                  "example": "492586",
+                  "description": "First 6 or 8 digits of the card number \"The issuer number\""
+                },
+                "masked_pan": {
+                  "type": "string",
+                  "format": "masked-pan",
+                  "pattern": "^([0-9]{6}\\*)?\\**([0-9]{4}|[0-9]{6})(-[0-9])?$",
+                  "example": "1234",
+                  "description": "The last four or six digits of the customer's card or bank account. Depending on the type of payment process"
+                },
+                "credit": {
+                  "type": "object",
+                  "description": "To define details around the gift credits used as a payment medium during this transaction",
+                  "properties": {
+                    "merchant_sorting": {
+                      "type": "string",
+                      "example": "JH1YA48MFM7SQPT5",
+                      "description": "The index value for grouping credit/ticket objects to a merchant defined sorting"
+                    },
+                    "merchant_reference": {
+                      "type": "string",
+                      "example": "PHFUIOLK",
+                      "description": "The reference value defined by the merchant for the ticket/credit object"
+                    }
+                  }
+                },
+                "point_scheme": {
+                  "type": "object",
+                  "description": "Use to define what point object to withdraw points from when processing the receipt",
+                  "properties": {
+                    "merchant_sorting": {
+                      "type": "string",
+                      "example": "JH1YA48MFM7SQPT5",
+                      "description": "The index value for grouping point objects to a merchant defined sorting"
+                    },
+                    "merchant_reference": {
+                      "type": "string",
+                      "example": "01FPNEDK7CYG9KDZSWAH71JGFP",
+                      "description": "The reference passed in by the merchant for a point object that has been created"
+                    },
+                    "points": {
+                      "type": "number",
+                      "example": 0,
+                      "description": "The points to be withdrawn from the point_object_reference"
+                    },
+                    "points_name": {
+                      "type": "string",
+                      "example": "cups",
+                      "description": "The name of the points defined by the scheme owner"
+                    }
+                  }
+                },
+                "timestamp": {
+                  "type": "string",
+                  "format": "date-time-payment",
+                  "example": "2020-09-15T15:53:00+01:00",
+                  "description": "Follows at minimum this format '<code>YYYY-MM-DDThh:mm</code> and it is expected that if no timezone is stated that time is UTC <a href=\"https://datatracker.ietf.org/doc/html/rfc3339#section-5.6\"><b>RFC 3339</b></a> format'"
+                },
+                "bank_terminal_id": {
+                  "type": "string",
+                  "example": "12329911",
+                  "description": "The unique identifier of the bank terminal for the payment service provider used."
+                },
+                "national_merchant_number": {
+                  "type": "string",
+                  "example": "324295",
+                  "description": "The unique identifier of the merchant for the service provider used."
+                },
+                "auth_code": {
+                  "type": "string",
+                  "format": "authorization_payment",
+                  "maxLength": 6,
+                  "example": "447247",
+                  "description": "Unique authorization code from the payment scheme indicating that the payment has been approved by the issuing bank (Visa, Mastercard, Amex etc.). When the \"payment_scheme\" is \"visa\",\"mastercard\" or \"amex\" this field is expected to follow the <a href=\"https://en.wikipedia.org/wiki/ISO_8583\"><b>ISO 8583</b></a> data field 38 format as a 6 alphanumeric value"
+                },
+                "ref_nr": {
+                  "type": "string",
+                  "format": "rrn_payment",
+                  "minLength": 12,
+                  "maxLength": 12,
+                  "example": "567734443372",
+                  "description": "The unique retrieval reference number of the transaction from the payment scheme (Visa, Mastercard, Amex etc.) also called RRN number. When the \"payment_method_type\" is \"visa\",\"mastercard\" or \"amex\" this field is validated to follow the <a href=\"https://en.wikipedia.org/wiki/ISO_8583\"><b>ISO 8583</b></a> data field 37 format as a 12 alphanumeric value"
+                },
+                "aid_nr": {
+                  "type": "string",
+                  "example": "D5780000021010",
+                  "description": "The AID number of the payment scheme (Visa, Mastercard, Amex etc.)"
+                },
+                "tvr_nr": {
+                  "type": "string",
+                  "example": "8000048000",
+                  "description": "Unique response code defining in what way the payment was accepted or declined from the payment service provider (Checkout provider)"
+                },
+                "tsi_nr": {
+                  "type": "string",
+                  "example": "6800",
+                  "description": "Unique response code defining at what stage the payment process was accepted or declined from the payment service provider (Checkout provider)"
+                },
+                "response_code": {
+                  "type": "string",
+                  "example": "00",
+                  "description": "Unique response code defining if the payment was accepted or declined from the payment scheme (Visa, Mastercard, Amex etc.)"
+                },
+                "tip_amount": {
+                  "type": "number",
+                  "example": 100,
+                  "description": "Amount of tip in this payment."
+                },
+                "payment_amount": {
+                  "type": "number",
+                  "example": 22476,
+                  "description": "The total amount paid in this transaction, including VAT and rounded (if applicable)"
+                }
+              }
+            }
+          },
+          "invoices": {
+            "type": "array",
+            "description": "The invoice object if suitable to be passed to users interface",
+            "items": {
+              "type": "object",
+              "required": [
+                "invoice_number",
+                "account_number",
+                "due_date",
+                "currency",
+                "vat_amount",
+                "payment_amount"
+              ],
+              "properties": {
+                "application_ownerships": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^[a-z0-9-]*$"
+                  },
+                  "example": ["70bf66b9-1b65-4e07-ad7b-a8fcd77fcb44"],
+                  "description": "The internal reference number of a specific application in Zeipt system to be the only one to receive these invoice objects"
+                },
+                "invoice_number": {
+                  "type": "string",
+                  "example": "IN212390",
+                  "description": "The invoice number as set by the seller."
+                },
+                "account_number": {
+                  "type": "string",
+                  "example": "8601 1117 947",
+                  "description": "The account number as set by the seller."
+                },
+                "national_customer_invoice_number": {
+                  "type": "string",
+                  "example": "788694079543",
+                  "description": "The national invoice number if used by the seller"
+                },
+                "due_date": {
+                  "type": "string",
+                  "format": "date-time",
+                  "example": "2020-09-15T15:53:00+01:00",
+                  "description": "Due date of the invoice, following the <code>YYYY-MM-DDThh:mm:ss±hh:mm</code> <a href=\"https://datatracker.ietf.org/doc/html/rfc3339#section-5.6\"><b>RFC 3339</b></a> format."
+                },
+                "currency": {
+                  "type": "string",
+                  "format": "currency",
+                  "pattern": "^[a-zA-Z]*$",
+                  "maxLength": 3,
+                  "example": "NOK",
+                  "description": "Currency set by the seller <a href=\"https://en.wikipedia.org/wiki/ISO_4217\"><b>ISO 4217</b></a> format."
+                },
+                "vat_amount": {
+                  "type": "number",
+                  "example": 0,
+                  "description": "The vat amount as set by the seller."
+                },
+                "vat_percentage": {
+                  "type": "number",
+                  "format": "percentage_form",
+                  "example": 0,
+                  "description": "<code>PERCENTAGE FORM</code> The vat percentage as set by the seller, we expect it to be a fraction of 100 eg. 0,15 = 0,15% & 15 = 15%"
+                },
+                "payment_amount": {
+                  "type": "number",
+                  "example": 0,
+                  "description": "The total payment amount as set by the seller."
+                },
+                "seller": {
+                  "type": "object",
+                  "description": "If the seller is someone else than stated in the merchant object, overide in the creation of the invoice object with these values",
+                  "properties": {
+                    "org_number": {
+                      "type": "string",
+                      "example": "916809026MVA",
+                      "description": "The organization / VAT identification number of the seller, <a href=\"https://en.wikipedia.org/wiki/VAT_identification_number\"><b>VAT ID</b></a>"
+                    },
+                    "country_code": {
+                      "type": "string",
+                      "example": "NO",
+                      "description": "<a href=\"https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2\"><b>SO 3166-1 alpha 2</b></a> format"
+                    },
+                    "contact_info": {
+                      "type": "object",
+                      "properties": {
+                        "country_code": {
+                          "type": "string",
+                          "example": "NO",
+                          "description": "<a href=\"https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2\"><b>SO 3166-1 alpha 2</b></a> format"
+                        },
+                        "city": {
+                          "type": "string",
+                          "example": "Oslo",
+                          "description": "The city of the purchase location."
+                        },
+                        "zip_code": {
+                          "type": "string",
+                          "example": "0254",
+                          "description": "The zip code of the purchase location."
+                        },
+                        "address": {
+                          "type": "string",
+                          "example": "Veien 23",
+                          "description": "The address of the purchase location."
+                        },
+                        "name": {
+                          "type": "string",
+                          "example": "Shop&Go",
+                          "description": "Name of the purchase location"
+                        },
+                        "email": {
+                          "type": "string",
+                          "maxLength": 254,
+                          "format": "email",
+                          "pattern": "^[a-zA-Z0-9@!#$%&'*+\\-/=?^_\\x60{|}~.]*$",
+                          "example": "store@example.com",
+                          "description": "The store's email address, <a href=\"https://en.wikipedia.org/wiki/Email_address\"><b>Email</b></a> format"
+                        },
+                        "telephone": {
+                          "type": "object",
+                          "description": "The store's phone number.",
+                          "properties": {
+                            "country_calling_code": {
+                              "type": "string",
+                              "maxLength": 4,
+                              "format": "calling_code",
+                              "pattern": "^[+0-9]*$",
+                              "example": "+47",
+                              "description": "The phone number country code <a href=\"https://en.wikipedia.org/wiki/E.123\"><b>E.123</b></a> format"
+                            },
+                            "number": {
+                              "type": "string",
+                              "maxLength": 12,
+                              "format": "tele_number",
+                              "pattern": "^[0-9]*$",
+                              "example": "97419601",
+                              "description": "The phone number, <a href=\"https://en.wikipedia.org/wiki/E.123\"><b>E.123</b></a> format"
+                            }
+                          }
+                        },
+                        "website": {
+                          "type": "string",
+                          "format": "url",
+                          "pattern": "^[a-zA-Z0-9-._~()'!*:@,;/]*$",
+                          "example": "https://www.example.com",
+                          "description": "The store's website."
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "extra_receipt_view": {
+            "type": "object",
+            "description": "Extra values that can benefit the user experience of the receipt, often found at the bottom of the receipt.",
+            "properties": {
+              "bar_code": {
+                "type": "object",
+                "required": ["encoding", "value"],
+                "description": "The bar and/or qr code for relating to the receipt object.",
+                "properties": {
+                  "encoding": {
+                    "type": "string",
+                    "format": "bar_code_encoding",
+                    "enum": [
+                      "code_128",
+                      "code_39",
+                      "ean_13",
+                      "ean_8",
+                      "interleaved_2_of_5",
+                      "qr"
+                    ],
+                    "example": "code_128",
+                    "description": "The encoding standard you want the application to use when building the barcode view"
+                  },
+                  "value": {
+                    "type": "string",
+                    "format": "id",
+                    "pattern": "^[a-zA-Z0-9@!#$%&*+\\-/=?^_\\x60{|}~:;.]*$",
+                    "example": "Z1n0flmEOO",
+                    "description": "Data of the barcode when read"
+                  },
+                  "display_value": {
+                    "type": "string",
+                    "example": "SG15623489202",
+                    "description": "The text to be shown for barcode value"
+                  }
+                }
+              },
+              "return_policy": {
+                "type": "object",
+                "properties": {
+                  "policy_end_date": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2020-09-15T15:53:00+01:00",
+                    "description": "<code>YYYY-MM-DDThh:mm:ss±hh:mm</code> <a href=\"https://datatracker.ietf.org/doc/html/rfc3339#section-5.6\"><b>RFC 3339</b></a> format"
+                  },
+                  "policy_description": {
+                    "type": "string",
+                    "maxLength": 200,
+                    "example": "30 days return",
+                    "description": "Text describing the return policy to be shown on the receipt."
+                  }
+                }
+              },
+              "customer_buyers": {
+                "type": "array",
+                "description": "The description of customer buyer if suitable to use, Some edge cases require it as per tax authority policy",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "customer_first_name": {
+                      "type": "string",
+                      "example": "John",
+                      "description": "First name of customer"
+                    },
+                    "customer_surname": {
+                      "type": "string",
+                      "example": "Oliverson",
+                      "description": "Surname of customer"
+                    },
+                    "customer_telephone": {
+                      "type": "object",
+                      "properties": {
+                        "country_calling_code": {
+                          "type": "string",
+                          "maxLength": 4,
+                          "format": "calling_code",
+                          "pattern": "^[+0-9]*$",
+                          "example": "+47",
+                          "description": "The phone number country code <a href=\"https://en.wikipedia.org/wiki/E.123\"><b>E.123</b></a> format"
+                        },
+                        "number": {
+                          "type": "string",
+                          "maxLength": 12,
+                          "format": "tele_number",
+                          "pattern": "^[0-9]*$",
+                          "example": "97419601",
+                          "description": "The phone number, <a href=\"https://en.wikipedia.org/wiki/E.123\"><b>E.123</b></a> format"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "company_buyers": {
+                "type": "array",
+                "description": "The description of company buyer if suitable",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "company_number": {
+                      "type": "string",
+                      "example": "9895852299",
+                      "description": "The organization / VAT identification number of the seller, <a href=\"https://en.wikipedia.org/wiki/VAT_identification_number\"><b>VAT ID</b></a>"
+                    },
+                    "company_country_code": {
+                      "type": "string",
+                      "example": "NO",
+                      "description": "<a href=\"https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2\"><b>SO 3166-1 alpha 2</b></a> format"
+                    },
+                    "company_name": {
+                      "type": "string",
+                      "example": "Snabb Snickare",
+                      "description": "The legal company name of company"
+                    },
+                    "company_suffix": {
+                      "type": "string",
+                      "example": "AS",
+                      "description": "The Suffix of company name eg AS, AB, limited etc..."
+                    },
+                    "company_common_name": {
+                      "type": "string",
+                      "example": "Snickare Andersson",
+                      "description": "The common name of company if applicable"
+                    }
+                  }
+                }
+              },
+              "seller_id": {
+                "type": "string",
+                "example": "444",
+                "description": "The ID of the seller."
+              },
+              "seller_name": {
+                "type": "string",
+                "example": "Sibban",
+                "description": "The name of the seller."
+              },
+              "operator_id": {
+                "type": "string",
+                "example": "432",
+                "description": "The ID of the operator."
+              },
+              "operator_name": {
+                "type": "string",
+                "example": "Sebastian",
+                "description": "The name of the operator."
+              },
+              "operator_text": {
+                "type": "string",
+                "maxLength": 200,
+                "example": "You have been serviced by Lennart",
+                "description": "Operator's message to be displayed on the receipt."
+              },
+              "cashier_goodbye_message": {
+                "type": "string",
+                "maxLength": 200,
+                "example": "Thank you, come again",
+                "description": "Message to be displayed at the bottom of receipt. The only line allowed to be longer than 60 characters."
+              },
+              "opening_hours": {
+                "type": "string",
+                "maxLength": 200,
+                "example": "Man-Fri: 07.00-24.00 Sat-Sun: 08.00-24.00",
+                "description": "Opening hours of associated store."
+              }
+            }
+          },
+          "extended_receipt_logic": {
+            "type": "object",
+            "description": "Extra values to initiate the Zeipt system logic that can extend the user experience of the receipt.",
+            "properties": {
+              "discounts": {
+                "type": "array",
+                "description": "Use to generate a discount for the purchase that all receivers of the receipt can use in store.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "merchant_sorting": {
+                      "type": "string",
+                      "example": "JH1YA48MFM7SQPT5",
+                      "description": "The index value for grouping discount objects to a merchant defined sorting"
+                    },
+                    "merchant_reference": {
+                      "type": "string",
+                      "example": "01FPNEDK7CYG9KDZSWAH71JGFP",
+                      "description": "The reference passed in by the merchant for the discount object"
+                    },
+                    "application_ownerships": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^[a-z0-9-]*$"
+                      },
+                      "example": ["70bf66b9-1b65-4e07-ad7b-a8fcd77fcb44"],
+                      "description": "The internal reference number of a specific application in Zeipt system to be the only one to receive these discount objects"
+                    },
+                    "expiration_date": {
+                      "type": "string",
+                      "format": "date-time",
+                      "example": "2020-09-15T15:53:00+01:00",
+                      "description": "The expiration date set by the seller, follows the <code>YYYY-MM-DDThh:mm:ss±hh:mm</code> <a href=\"https://datatracker.ietf.org/doc/html/rfc3339#section-5.6\"><b>RFC 3339</b></a> format"
+                    },
+                    "amount": {
+                      "type": "number",
+                      "example": 0,
+                      "description": "To create a discount object"
+                    },
+                    "percentage": {
+                      "type": "number",
+                      "format": "percentage_form",
+                      "example": 0,
+                      "description": "<code>PERCENTAGE FORM</code> The discount effect as described in percentage, we expect it to be a fraction of 100 eg. 0,15 = 0,15% & 15 = 15%"
+                    },
+                    "art_numbers": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": ["230027A", "260142V", "etc..."],
+                      "description": "The art_number values this object is discounting for"
+                    },
+                    "bar_code": {
+                      "type": "object",
+                      "required": ["encoding", "value"],
+                      "description": "The bar and/or qr code to be visible for the discount object in view.",
+                      "properties": {
+                        "encoding": {
+                          "type": "string",
+                          "format": "scanner_encoding",
+                          "enum": [
+                            "code_128",
+                            "code_39",
+                            "ean_13",
+                            "ean_8",
+                            "interleaved_2_of_5",
+                            "qr"
+                          ],
+                          "example": "code_128",
+                          "description": "The encoding standard you want the application to use when building the barcode view"
+                        },
+                        "value": {
+                          "type": "string",
+                          "format": "id",
+                          "pattern": "^[a-zA-Z0-9@!#$%&*+\\-/=?^_\\x60{|}~:;.]*$",
+                          "example": "678JABCDEFG90123JAB4",
+                          "description": "Value of the barcode when read"
+                        },
+                        "display_value": {
+                          "type": "string",
+                          "example": "123585939",
+                          "description": "The text to be shown for barcode value"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "create_point_scheme": {
+                "type": "array",
+                "description": "Used for creating a point object for the receiver of the receipt for example a coffe card, <code>note</code> the requesting merchant needs to be own or be assigned to the point scheme",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "merchant_sorting": {
+                      "type": "string",
+                      "example": "JH1YA48MFM7SQPT5",
+                      "description": "The index value for grouping point objects to a merchant defined sorting"
+                    },
+                    "merchant_reference": {
+                      "type": "string",
+                      "example": "01FPNEDK7CYG9KDZSWAH71JGFP",
+                      "description": "The reference passed in by the merchant for a point object that has been created"
+                    },
+                    "points": {
+                      "type": "number",
+                      "example": 0,
+                      "description": "The points to be added, when creating the point object \"point_object_reference\" for this point_scheme"
+                    },
+                    "points_name": {
+                      "type": "string",
+                      "example": "cups",
+                      "description": "The name of the points defined by the scheme owner"
+                    },
+                    "application_ownerships": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^[a-z0-9-]*$"
+                      },
+                      "example": ["70bf66b9-1b65-4e07-ad7b-a8fcd77fcb44"],
+                      "description": "The internal reference number of a specific application in Zeipt system to be the only one to receive the point object created for this point scheme"
+                    }
+                  }
+                }
+              },
+              "add_scheme_points": {
+                "type": "array",
+                "description": "Used for adding points to a point object \"point_object_reference\" for the receiver of the receipt for example a coffe card, <code>note</code> the requesting merchant needs to be own or be assigned to the point scheme",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "merchant_sorting": {
+                      "type": "string",
+                      "example": "JH1YA48MFM7SQPT5",
+                      "description": "The index value for grouping point objects to a merchant defined sorting"
+                    },
+                    "merchant_reference": {
+                      "type": "string",
+                      "example": "01FPNEDK7CYG9KDZSWAH71JGFP",
+                      "description": "The reference passed in by the merchant for a point object that it controls that is targeted for this addition"
+                    },
+                    "points": {
+                      "type": "number",
+                      "example": 0,
+                      "description": "The points to be added, to the point object \"point_object_reference\" for this point_scheme"
+                    },
+                    "points_name": {
+                      "type": "string",
+                      "example": "cups",
+                      "description": "The name of the points defined by the scheme owner"
+                    },
+                    "application_ownerships": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^[a-z0-9-]*$"
+                      },
+                      "example": ["70bf66b9-1b65-4e07-ad7b-a8fcd77fcb44"],
+                      "description": "The internal reference number of a specific application in Zeipt system to be the only one to receive the point object created for this point scheme"
+                    }
+                  }
+                }
+              },
+              "external_view_logics": {
+                "type": "array",
+                "description": "The created external url address customer flows, the generated OTK is found after the ? character, follows our <b>OTK<b> (One Time Key) format",
+                "items": {
+                  "type": "object",
+                  "required": ["logic"],
+                  "properties": {
+                    "logic": {
+                      "type": "string",
+                      "format": "ulid",
+                      "pattern": "^[A-Z0-9-]*$",
+                      "example": "01FPNEEAXA8HHEZQQ8CFMXYZKS",
+                      "description": "Reference to a thirdparty logic object created for this merchant, when filled in the external view created will follow that objects setup."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+
+      "ReceiptResponse": {
+        "type": "object",
+        "properties": {
+          "zeipt_receipt_transr": {
+            "type": "string",
+            "format": "ulid",
+            "pattern": "^[A-Z0-9-]*$",
+            "example": "01FPNEGW53GC6BD0484R7H5VKC",
+            "description": "Zeipt's globally unique reference string for the receipt"
+          },
+          "bar_code": {
+            "type": "object",
+            "description": "The barcode value saved as reference to the object in Zeipt system",
+            "properties": {
+              "encoding": {
+                "type": "string",
+                "enum": [
+                  "code_128",
+                  "code_39",
+                  "ean_13",
+                  "ean_8",
+                  "interleaved_2_of_5",
+                  "qr"
+                ],
+                "example": "code_128",
+                "description": "The encoding standard you want the application to use when building the barcode view"
+              },
+              "value": {
+                "type": "string",
+                "format": "id",
+                "pattern": "^[a-zA-Z0-9@!#$%&*+\\-/=?^_\\x60{|}~:;.]*$",
+                "example": "Z1n0flmEO1",
+                "description": "Data of the barcode when read"
+              },
+              "display_value": {
+                "type": "string",
+                "example": "15623489233",
+                "description": "The text to be shown for barcode value"
+              }
+            }
+          },
+          "saved": {
+            "type": "boolean",
+            "default": false,
+            "example": false,
+            "description": "If a pgcid (user) was not found directly at creation of the receipt object this flag is set to true to indicate that the receipt is saved up to 72h for future matching processes"
+          },
+          "estimated_delivery_duration_ms": {
+            "type": "integer",
+            "example": 948577,
+            "description": "Estimated time in ms until the webhook to a user is sent if a user was not found directly at receipt creation"
+          },
+          "external_view_logics": {
+            "type": "array",
+            "description": "The created extended view with the url address, the generated OTK is found after the ? character, follows our <code>OTK</code> (One Time Key) format",
+            "items": {
+              "type": "object",
+              "properties": {
+                "external_url_address": {
+                  "type": "string",
+                  "format": "uri",
+                  "pattern": "^[a-zA-Z0-9-._~()'!*:@,;/?=&]*$",
+                  "example": "thirdparty.something/subadress?{OTK}",
+                  "description": "The thirdparty address for starting the customer flow"
+                },
+                "external_url_type": {
+                  "type": "string",
+                  "enum": [
+                    "invite",
+                    "finance",
+                    "survey",
+                    "consent",
+                    "insurance"
+                  ],
+                  "example": "invite",
+                  "description": "The type of customer flow"
+                },
+                "logic": {
+                  "type": "string",
+                  "format": "ulid",
+                  "pattern": "^[A-Z0-9-]*$",
+                  "example": "01FPNEEAXA8HHEZQQ8CFMXYZKS",
+                  "description": "Reference to a thirdparty logic object in zeipt systems created for this merchant, when filled in the external view created will follow that objects setup."
+                }
+              }
+            }
+          }
+        }
+      },
+
+      "ErrorResponse": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "reference": {
+              "type": "string",
+              "format": "ulid",
+              "pattern": "^[A-Z0-9-]*$",
+              "example": "01FPNEEAXA8HHEZQQ8CFMXYZKS",
+              "description": "The unique reference number generated for request error tracing"
+            },
+            "errors": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "docs": {
+                    "type": "string",
+                    "format": "url",
+                    "pattern": "^[a-zA-Z0-9-._~()'!*:@,;/]*$",
+                    "example": "https://dashboard.zeipt.com/#/resources/errors",
+                    "description": "Url path to the extended description of the error"
+                  },
+                  "error": {
+                    "type": "string",
+                    "description": "Short description of the error"
+                  },
+                  "field": {
+                    "type": "string",
+                    "description": "Description on what json key that triggered the error"
+                  },
+                  "rule": {
+                    "type": "string",
+                    "description": "Description on what logic rule that triggered the error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "ApiKey": {
+        "description": "Generate the Api key in the dashboard, can be used instead of our default JWT authorization scheme\n<br />\n<br />\n<b style=\"font-size: 12px\">Service endpoint:</b> <a href=\"https://zeipt.com/api-doc#operation/generateApiKey.apps.cashier\"><b>Generate api key</b></a>\n<br />\n<b style=\"font-size: 12px\">Definition:</b> The ApiKey can only be used for operations on /client/... or /{client_type}/... endpoints\n<br />\n<br />\n<b style=\"font-size: 12px\">Note:</b> When using this api key the {client_gcid} needs to be used not the {client_number}\n<br />\n<br />\n<b style=\"font-size: 12px\">Refresh:</b> Can also be used as refresh token in body for generating a JWT token on: <a href=\"https://zeipt.com/api-doc#operation/jwtpid.apps.cashier\"><b>Endpoint</b></a>.\n<br />\n<br />\n",
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
+      },
+      "Provider_Token": {
+        "description": "Our default security scheme, it follows the <a href=\"https://tools.ietf.org/html/rfc7519\"><b>RFC 7519</b></a> standard\n<br />\n<br />\n<b style=\"font-size: 12px\">Service endpoint:</b> <a href=\"https://zeipt.com/api-doc#operation/jwtpid.apps.cashier\"><b>Generate token</b></a>\n<br />\n<b style=\"font-size: 12px\">Definition:</b> The \"Provider Token\" can only be used for operations on /client/... or /{client_type}/... endpoints\n<br />\n<br />\n<b style=\"font-size: 12px\">Note:</b> When using this jwt the {client_gcid} needs to be used not the {client_number}\n<br />\n<br />\n",
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      },
+      "Dashboard_Token": {
+        "description": "Our default security scheme, it follows the <a href=\"https://tools.ietf.org/html/rfc7519\"><b>RFC 7519</b></a> standard\n<br />\n<br />\n<b style=\"font-size: 12px\">Service endpoint:</b> <a href=\"https://zeipt.com/api-doc#operation/jwtDashboard.apps.cashier\"><b>Generate token</b></a>\n<br />\n<b style=\"font-size: 12px\">Definition:</b> The \"Dashboard Token\" can only be used for operations on /dashboard/... and /client/... or the /files and /pid/... endpoints. <b style=\"font-size: 14px\">Exception:</b> on pid/webhook/message and client/.../initiation endpoints\n<br />\n<br />\n<b style=\"font-size: 12px\">Note:</b> When using this jwt the {client_number} needs to be used not the {client_gcid}. <b style=\"font-size: 14px\">Exception:</b> when no {client_number} is defined in body\n<br />\n<br />\n",
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      },
+      "User_Token": {
+        "description": "Our default security scheme, it follows the <a href=\"https://tools.ietf.org/html/rfc7519\"><b>RFC 7519</b></a> standard\n<br />\n<br />\n<b style=\"font-size: 12px\">Service endpoint:</b> <a href=\"https://zeipt.com/api-doc#operation/jwtuser.apps.cashier\"><b>Generate token</b></a>\n<br />\n<b style=\"font-size: 12px\">Definition:</b> The \"User_Token\" can only be used for operations on /app/user/... endpoints\n<br />\n<br />\n",
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      },
+      "Public_Token": {
+        "description": "Our default security scheme, it follows the <a href=\"https://tools.ietf.org/html/rfc7519\"><b>RFC 7519</b></a> standard\n<br />\n<br />\n<b style=\"font-size: 12px\">Service endpoint:</b> <a href=\"https://zeipt.com/api-doc#operation/jwtPublic.apps.cashier\"><b>Generate token</b></a>\n<br />\n<b style=\"font-size: 12px\">Definition:</b> The \"Public_Token\" can only be used for operations on the /app/user/receipt/fetch/transnr endpoint\n<br />\n<br />\n",
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}
