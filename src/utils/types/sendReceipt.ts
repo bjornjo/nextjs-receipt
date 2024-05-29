@@ -702,7 +702,8 @@ export interface SendReceipt {
       | "cash"
       | "credit_bank"
       | "debit_bank"
-      | "own_defined";
+      | "own_defined"
+      | string;
     /** @description If you want the Zeipt system to parse the raw data you get in return from the payment service provider, you add it here <code>Note:</code> That the service provider needs to also be stated */
     service_provider?: {
       /**
@@ -730,7 +731,8 @@ export interface SendReceipt {
       | "amex"
       | "point_scheme"
       | "gift_card"
-      | "other";
+      | "other"
+      | string;
     /**
      * @description The issuer of the payment scheme
      * @example Bank Norwegian

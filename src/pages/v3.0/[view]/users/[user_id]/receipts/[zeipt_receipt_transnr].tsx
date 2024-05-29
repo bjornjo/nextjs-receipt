@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable @next/next/no-img-element */
 import { GetServerSideProps } from "next";
 import bwipjs from "bwip-js";
 import { Receipt } from "@/utils/types/receipt";
@@ -7,7 +9,6 @@ import plus from "../../../../../../../public/plus.svg";
 import cross from "../../../../../../../public/cross.svg";
 import minus from "../../../../../../../public/minus.svg";
 import QRCode from "react-qr-code";
-import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 
@@ -65,7 +66,7 @@ const Home = (props: any) => {
   const [receipt, setReceipt] = useState(
     props.preview ? (receiptExample as Receipt) : (props.receipt as Receipt)
   );
-  console.log(props.receipt);
+
   const [lang, setLang] = useState(
     props.preview ? "en" : (props.lang as string).toLocaleLowerCase()
   );
@@ -140,6 +141,28 @@ const Home = (props: any) => {
     return () => window.removeEventListener("message", handler);
   }, []);
 
+  useEffect(() => {
+    // Create a favicon link element
+    const favicon = document.createElement('link');
+    favicon.rel = 'icon';
+    favicon.type = 'image/png';
+
+    if (!props.usePlaceholder) {
+      console.log("HALLO" + `${props.logoReference}?v=${Date.now()}`);
+      // If using fetched logo, set favicon to the fetched logo
+      favicon.href = `${props.logoReference}?v=${Date.now()}`;
+    }
+
+    // Append the link element to the head
+    document.head.appendChild(favicon);
+
+    // Cleanup when the component unmounts
+    return () => {
+      // Remove the dynamically added favicon
+      document.head.removeChild(favicon);
+    };
+  }, [props.logoReference, props.usePlaceholder]);
+
   const openPopup = (type: any, index?: number) => {
     showPopup({ type: type, index: index !== undefined ? index : -1 });
   };
@@ -164,7 +187,7 @@ const Home = (props: any) => {
                 <Image
                   className="merchant-logo"
                   id="merchant-logo"
-                  src={logo.src}
+                  src={props.usePlaceholder ? logo : props.logoReference}
                   fill
                   style={{ objectFit: 'contain' }}
                   alt="Merchant logo"
@@ -172,16 +195,14 @@ const Home = (props: any) => {
               </div>
               {!pdf && !preview && (
                 <div>
-                  <select id="language" name="language" onChange={e => setLang(e.target.value)}>
-                    <option selected={lang == "no" && true} value="no">NO</option>
-                    <option selected={lang == "en" && true} value="en">EN</option>
-                  </select>
+
                   <button
                     className="tag button"
                     disabled={isLoading}
                     onClick={handleClick}
                     style={{
                       margin: "0px !important",
+
                     }}
                   >
                     {lang == "no"
@@ -192,6 +213,15 @@ const Home = (props: any) => {
                         ? "Downloading..."
                         : "Download PDF"}
                   </button>
+                  <select
+                    style={{
+                      margin: "0px !important",
+                      marginLeft: "5px !important",
+                    }}
+                    id="language" defaultValue={lang} name="language" onChange={e => setLang(e.target.value)}>
+                    <option value="no">NOR</option>
+                    <option value="en">ENG</option>
+                  </select>
                 </div>
               )}
             </div>
@@ -456,7 +486,7 @@ const Home = (props: any) => {
 
             {/* Regnskogfondet */}
             <div className="box" style={{ background: "none" }}>
-              <a href="https://www.regnskog.no/no/" target="_blank" rel="noopener noreferrer">
+              <a style={{ display: "inline-block" }} href="https://www.regnskog.no/no/zeipt-receipt" target="_blank" rel="noopener noreferrer">
                 <img
                   className="merchant-logo"
                   src={regnskogfondet.src}
@@ -1449,6 +1479,38 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     }
   }
 
+  let logoReference = null;
+  let usePlaceholder = false;
+
+  try {
+    const response = await fetch(
+      "https://staging.api.zeipt.io/v3.0/files/" +
+      receipt.extra_receipt_view.merchant_logo,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "image/png",
+        },
+      }
+    );
+
+    if (response.ok) {
+      const logoBlob = await response.blob();
+
+      if (logoBlob.size > 0) {
+        const buffer = await logoBlob.arrayBuffer();
+        logoReference = `data:image/png;base64,${Buffer.from(buffer).toString('base64')}`;
+      } else {
+        usePlaceholder = true;
+      }
+    } else {
+      usePlaceholder = true;
+    }
+  } catch (error) {
+    usePlaceholder = true;
+    console.log("Error fetching logo:", error);
+  }
+
   return {
     props: {
       preview,
@@ -1461,6 +1523,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       pdf,
       view,
       token,
+      logoReference,
+      usePlaceholder,
       user_id,
       zeipt_receipt_transnr
     },

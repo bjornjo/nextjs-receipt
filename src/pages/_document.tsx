@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-css-tags */
 import { Html, Head, Main, NextScript } from 'next/document'
 
 export default function Document() {
@@ -5,6 +6,8 @@ export default function Document() {
     <Html lang="en">
       <Head>
         <link rel="stylesheet" href="/styles.css" />
+        <link rel="icon" href="/favicon.ico" type="image/png" />
+
 
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin='' />
